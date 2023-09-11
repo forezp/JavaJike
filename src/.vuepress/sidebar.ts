@@ -20,9 +20,9 @@ export default sidebar({
   "/observibility/":[
     {
       text: "打造亿级流量的监控系统",
-      icon: "laptop-code",
+      icon: "hot",
       prefix: "metric/",
-      link: "metric/",
+      // link: "metric/",
       children: "structure",
     },
   ]

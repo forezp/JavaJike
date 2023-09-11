@@ -6,17 +6,23 @@ export default hopeTheme({
   hostname: "https://vuepress-theme-hope-docs-demo.netlify.app",
 
   author: {
-    name: "Mr.Hope",
-    url: "https://mister-hope.com",
+    name: "forezp",
+    url: "https://www.javajike.com",
   },
+  // pure: true,
+  // 关键词: "iconfont", "iconify", "fontawesome", "fontawesome-with-brands"
+  iconAssets: "iconfont",
+  logo: "/logo.png",
 
-  iconAssets: "fontawesome-with-brands",
-
-  logo: "/logo.svg",
-
-  repo: "vuepress-theme-hope/vuepress-theme-hope",
+  repo: "forezp/JavaJike",
+    // 自定义仓库链接文字。默认从 `repo` 中自动推断为
+    // "GitHub" / "GitLab" / "Gitee" / "Bitbucket" 其中之一，或是 "Source"。
+  repoLabel: "GitHub",
+    // 是否在导航栏内显示仓库链接，默认为 `true`
+  repoDisplay: true,
 
   docsDir: "src",
+  toc: true,
 
   // navbar
   navbar,
@@ -36,10 +42,22 @@ export default hopeTheme({
 
   // page meta
   metaLocales: {
-    editLink: "在 GitHub 上编辑此页",
+    editLink: "在GitHub上编辑此页",
   },
-
+  pageInfo: [
+    "Author",
+    "Category",
+    "Tag",
+    "Date",
+    "Original",
+    "Word",
+    "ReadingTime",
+  ],
   plugins: {
+
+    
+    autoCatalog: false,
+    
     // You should generate and use your own comment service
 //    comment: {
 //      provider: "Giscus",
