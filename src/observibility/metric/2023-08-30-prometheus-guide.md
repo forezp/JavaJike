@@ -87,6 +87,6 @@ Prometheus是为可靠性而设计的。每个Prometheus都是单节点设计的
 
 ![img](https://static.javajike.com/img/2023/10/7/wps1.jpg)
 
-那prometheus不适合什么？
+**那prometheus不适合什么？**
 
 由于prometheus是使用周期性的采集数据，它并不能保证数据的及时性和绝对正确性，如果是想做与money相关的业务，使用prometheus明显是不合适的。
