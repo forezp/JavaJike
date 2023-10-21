@@ -17,8 +17,6 @@ Prometheus受启发于Google的Brogmon监控系统（类似于Kubernetes是从Go
 
 Prometheus通过时序数据来收集和存储指标。一个时序数据包含了一个时间戳、值和一个或者是多个key-value键值对。
 
-
-
 ##  Prometheus提供的特性
 
 作为新一代的监控系统，Prometheus和传统的监控系统相比，有着非常大的创新。Prometheus让监控从传统的黑盒子监控提升到了白盒监控；不仅可以监控系统的一些状态，也可以深入到进程内部关键点的监控（白盒监控）。
