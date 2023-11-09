@@ -1,9 +1,12 @@
-```
+---
 lang: zh-CN
 title: 在SpringBoot项目中使用Prometheus监控
 headerDepth: 0
+order: 6
 description: 在SpringBoot项目中使用Prometheus监控
-```
+---
+
+
 
 本篇文章主要讲解如何在SpringBoot项目中使用Prometheus监控，实现方式有两种，一种是使用Springboot自带的spring-boot-starter-actuator；另一种是使用Prometheus的Java客户端
 

@@ -1,9 +1,12 @@
-```
+---
 lang: zh-CN
 title: Prometheus的数据模型
 headerDepth: 0
+order: 4
 description: Prometheus数据模型
-```
+---
+
+
 
 ## 什么是time-series 
 

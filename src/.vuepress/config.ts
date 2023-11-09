@@ -6,7 +6,7 @@ export default defineUserConfig({
   base: "/",
 
   lang: "zh-CN",
-  title: "",
+  title: "方志朋的专栏",
   description: "主要讲解java面试和学习之路",
 
   plugins: [

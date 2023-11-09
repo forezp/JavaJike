@@ -1,9 +1,12 @@
-```
+---
 lang: zh-CN
 title: Prometheus告警与Alertmanager实战
 headerDepth: 0
+order: 7
 description: Prometheus告警与Alertmanager实战
-```
+---
+
+
 
 Prometheus的告警分为两部分内容：
 

@@ -1,9 +1,10 @@
-```
+---
 lang: zh-CN
 title: Prometheus预处理计算-Recording Rule
 headerDepth: 0
+order: 8
 description: Prometheus预处理计算-Recording Rule
-```
+---
 
 
 

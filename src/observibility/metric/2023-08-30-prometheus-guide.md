@@ -2,6 +2,7 @@
 lang: zh-CN
 title: Prometheus概述
 headerDepth: 0
+order: 2
 description: Prometheus简介
 ---
 

@@ -7,13 +7,14 @@ export default hopeTheme({
 
   author: {
     name: "forezp",
-    url: "https://www.javajike.com",
+    url: "https://www.fangzhipeng.com",
   },
-  // pure: true,
+   //pure: true,
   // 关键词: "iconfont", "iconify", "fontawesome", "fontawesome-with-brands"
-  iconAssets: "iconfont",
+  // iconAssets: "iconfont",
+  iconAssets: "//at.alicdn.com/t/c/font_4318520_kk4pcsn4t4d.css",
   logo: "/logo.png",
-
+  breadcrumb: false,
   repo: "forezp/JavaJike",
     // 自定义仓库链接文字。默认从 `repo` 中自动推断为
     // "GitHub" / "GitLab" / "Gitee" / "Bitbucket" 其中之一，或是 "Source"。
@@ -44,6 +45,7 @@ export default hopeTheme({
   metaLocales: {
     editLink: "在GitHub上编辑此页",
   },
+
   pageInfo: [
     "Author",
     "Category",
@@ -110,7 +112,7 @@ export default hopeTheme({
 
     // uncomment these if you want a pwa
     // pwa: {
-    //   favicon: "/favicon.ico",
+    //   favicon: "/favicon-javajike.ico",
     //   cacheHTML: true,
     //   cachePic: true,
     //   appendBase: true,

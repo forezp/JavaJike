@@ -1,9 +1,10 @@
-```
+---
 lang: zh-CN
 title: Prometheus环境搭建
 headerDepth: 0
+order: 3
 description: Prometheus环境搭建
-```
+---
 
 本文是Prometheus环境的搭建和安装，包括prometheus-sever、node-exporter、grafna的安装。安装成功后，配置prometheus采集node-exporter的指标，然后在grafana展示node-exporter采集的指标。
 

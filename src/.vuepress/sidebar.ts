@@ -17,10 +17,21 @@ export default sidebar({
       children: "structure",
     },
   ],
+  "/interview/": [
+    {
+      text: "设计模式",
+      prefix: "design/",
+      icon: "star",
+      collapsible: true,
+      //link: "design/",
+      children: "structure",
+    }
+  ],
   "/observibility/":[
     {
       text: "打造亿级流量的监控系统",
       icon: "hot",
+      collapsible: true,
       prefix: "metric/",
       // link: "metric/",
       children: "structure",

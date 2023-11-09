@@ -1,7 +1,7 @@
 ---
 home: true
 icon: home
-title: Java极客技术学习
+title: 方志朋,Java,Spring,Spring Boot,Spring Cloud,Java后端技术
 heroImage: /hero3.png
 bgImage:
 bgImageDark:

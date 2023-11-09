@@ -1,9 +1,11 @@
-```
+---
 lang: zh-CN
-title: 一次性搞懂设计模式--装饰器模式
+title: 装饰器模式
 headerDepth: 0
+order: 5
+icon: a-008_kafei
 description: 一次性搞懂设计模式--装饰器模式
-```
+---
 
 装饰器模式的核心思想就是在不改变原有的类的基础之上给类添加新的功能，相当于对原有的类进行类一个包装，它又称为包装器模式。
 
@@ -18,9 +20,9 @@ description: 一次性搞懂设计模式--装饰器模式
 
 ## UML图
 
+![image-20231102232111957](https://static.javajike.com/img/2023/11/4/image-20231102232111957-20231104220507776.jpeg)
 
 
-![image-20231102232111957](https://static.javajike.com/img/2023/11/3/image-20231102232111957.jpeg)
 
 上图是装饰器的UML图，在图中一共有三个角色：
 
