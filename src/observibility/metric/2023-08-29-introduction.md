@@ -1,12 +1,12 @@
 ---
 lang: zh-CN
-title: prometheus简明教程
+title: 概览
 headerDepth: 0
 order: 1
 description: prometheus简明教程
 ---
 
-## 打造亿级流量的监控系统
+## Prometheus教程介绍
 
 本篇文章为系列教程，旨在记录和向读者讲述如何利用prometheus系列技术栈打造亿级指标的监控系统。所用到开源组件如下：
 

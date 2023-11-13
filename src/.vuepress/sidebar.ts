@@ -1,22 +1,22 @@
 import { sidebar } from "vuepress-theme-hope";
 
 export default sidebar({
-  "/": [
-    "",
-    {
-      text: "案例",
-      icon: "laptop-code",
-      prefix: "demo/",
-      link: "demo/",
-      children: "structure",
-    },
-    {
-      text: "文档",
-      icon: "book",
-      prefix: "guide/",
-      children: "structure",
-    },
-  ],
+  // "/": [
+  //   "",
+  //   {
+  //     text: "案例",
+  //     icon: "laptop-code",
+  //     prefix: "demo/",
+  //     link: "demo/",
+  //     children: "structure",
+  //   },
+  //   {
+  //     text: "文档",
+  //     icon: "book",
+  //     prefix: "guide/",
+  //     children: "structure",
+  //   },
+  // ],
   "/interview/": [
     {
       text: "设计模式",
@@ -29,7 +29,7 @@ export default sidebar({
   ],
   "/observibility/":[
     {
-      text: "打造亿级流量的监控系统",
+      text: "Prometheus简明教程",
       icon: "hot",
       collapsible: true,
       prefix: "metric/",

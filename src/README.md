@@ -26,9 +26,9 @@ features:
     details: 生命不息，奋斗不止。
 
 copyright: false
-footer: 使用 <a href="https://theme-hope.vuejs.press/zh/" target="_blank">VuePress Theme Hope</a> 主题 | MIT 协议, 版权所有 © 2019-present Mr.Hope
+footer:  <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18121138号-1</a>  | MIT 协议, 版权所有 © 2023-present fangzhipeng
 ---
-
+   
 ---
 
 ## 更新计划

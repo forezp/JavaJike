@@ -3,10 +3,10 @@ import navbar from "./navbar.js";
 import sidebar from "./sidebar.js";
 
 export default hopeTheme({
-  hostname: "https://vuepress-theme-hope-docs-demo.netlify.app",
+  hostname: "https://www.fangzhipeng.com",
 
   author: {
-    name: "forezp",
+    name: "fangzhipeng",
     url: "https://www.fangzhipeng.com",
   },
    //pure: true,
@@ -31,7 +31,7 @@ export default hopeTheme({
   // sidebar
   sidebar,
 
-  footer: "默认页脚",
+  footer: "<a href=\"https://beian.miit.gov.cn/\" target=\"_blank\">粤ICP备18121138号-1</a>",
 
   displayFooter: true,
 
