@@ -2,7 +2,7 @@
 home: true
 icon: home
 title: 方志朋,Java,Spring,Spring Boot,Spring Cloud,Java后端技术
-heroImage: /hero3.png
+heroImage: https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2023/11/14/hero3.png
 bgImage:
 bgImageDark:
 bgImageStyle:
@@ -11,11 +11,11 @@ heroText: 学习&面试指南
 tagline: 一线大厂架构师分享Java面试手册、算法、设计模式、中间件、大数据、云原生、架构...
 actions:
   - text: 面试 💡
-    link: ./demo/
+    link: /interview/design/2023-10-29-design-overview.md
     type: primary
 
   - text: 学习
-    link: ./guide/
+    link: /observibility/metric/2023-08-29-introduction.md
 
 features:
   - title: 成长

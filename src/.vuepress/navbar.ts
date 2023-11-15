@@ -20,7 +20,7 @@ export default navbar([
   },
   {
     text: "老版本博客",
-    icon: "github",
+    icon: "bxl-spring-boot",
     link: "http://blog.fangzhipeng.com",
   },
 ]);
