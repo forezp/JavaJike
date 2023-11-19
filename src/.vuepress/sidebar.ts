@@ -29,13 +29,13 @@ export default sidebar({
         {
             text: "java基础",
             prefix: "basic/",
-            icon: "star",
+            icon: "java",
             collapsible: true,
             //link: "design/",
             children: [
                 {
                     text: "高频面试题",
-                    icon: "star",
+                    icon: "jishufuwu",
                     prefix: "shortq/",
                     collapsible: true,
                     children: [
