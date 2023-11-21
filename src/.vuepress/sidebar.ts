@@ -40,6 +40,7 @@ export default sidebar({
                     collapsible: true,
                     children: [
                         "2023-11-14-java1.md",
+                        "2023-11-20-java2.md"
                     ],
                 },
             ],
