@@ -37,14 +37,37 @@ export default sidebar({
                     text: "高频面试题",
                     icon: "jishufuwu",
                     prefix: "shortq/",
-                    collapsible: true,
+                    collapsible: false,
                     children: [
                         "2023-11-14-java1.md",
                         "2023-11-20-java2.md",
                         "2023-11-26-final.md"
                     ],
                 },
+                {
+                    text: "集合类",
+                    icon: "rongqi",
+                    prefix: "collection/",
+                    collapsible: false,
+                    children: [
+                        "2023-11-26-collection.md"
+                    ],
+                },
             ],
+
+            // children: [
+            //     {
+            //         text: "高频面试题",
+            //         icon: "jishufuwu",
+            //         prefix: "shortq/",
+            //         collapsible: true,
+            //         children: [
+            //             "2023-11-14-java1.md",
+            //             "2023-11-20-java2.md",
+            //             "2023-11-26-final.md"
+            //         ],
+            //     },
+            // ],
         }
     ],
     "/observibility/": [

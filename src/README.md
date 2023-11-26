@@ -8,7 +8,7 @@ bgImageDark:
 bgImageStyle:
   background-attachment: fixed
 heroText: 学习&面试指南
-tagline: 一线大厂架构师分享Java面试手册、算法、设计模式、中间件、大数据、云原生、架构...
+tagline: 一线大厂程序员分享Java面试手册、算法、设计模式、中间件、大数据、云原生、架构...
 actions:
   - text: 面试 💡
     link: /interview/design/2023-10-29-design-overview.md
