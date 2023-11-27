@@ -46,11 +46,12 @@ export default sidebar({
                 },
                 {
                     text: "集合类",
-                    icon: "rongqi",
+                    icon: "haxi",
                     prefix: "collection/",
                     collapsible: false,
                     children: [
-                        "2023-11-26-collection.md"
+                        "2023-11-26-collection.md",
+                        "2023-11-27-arraylist-source.md"
                     ],
                 },
             ],
