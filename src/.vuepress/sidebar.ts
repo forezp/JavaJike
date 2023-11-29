@@ -51,7 +51,8 @@ export default sidebar({
                     collapsible: false,
                     children: [
                         "2023-11-26-collection.md",
-                        "2023-11-27-arraylist-source.md"
+                        "2023-11-27-arraylist-source.md",
+                        "2023-11-29-linkedlist-source.md"
                     ],
                 },
             ],
