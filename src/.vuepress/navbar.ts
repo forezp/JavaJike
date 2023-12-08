@@ -6,7 +6,7 @@ export default navbar([
   {
     text: "Java面试",
     icon: "java",
-    link: "/interview/design/2023-10-29-design-overview.md",
+    link: "/interview/basic/shortq/2023-11-14-java1.md",
   },
   {
     text: "中间件学习",
