@@ -84,6 +84,32 @@ export default sidebar({
             //         ],
             //     },
             // ],
+        },
+        {
+            text: "并发编程",
+            prefix: "concurrent/",
+            icon: "kuaisugaoxiao",
+            collapsible: true,
+            //link: "design/",
+            children: [
+                {
+                    text: "并发理论",
+                    icon: "yuanchengchuantou",
+                    prefix: "basic/",
+                    collapsible: false,
+                    children: "structure",
+                },
+                // {
+                //     text: "并发工具类",
+                //     icon: "zhenshikexin",
+                //     prefix: "tools/",
+                //     collapsible: false,
+                //     children: [
+                //
+                //     ],
+                // },
+            ],
+
         }
     ],
     "/observibility/": [
