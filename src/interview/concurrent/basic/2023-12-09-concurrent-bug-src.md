@@ -1,10 +1,11 @@
 ---
 lang: zh-CN
-title: 可见性、原子性、有序性
-headerDepth: 0
+title: 理解可见性、原子性、有序性
+headerDepth: 1
 order: 1
-icon: kaifang
-description: 可见性、原子性、有序性
+icon: renminbi
+collapsible: false
+description: 理解可见性、原子性、有序性
 ---
 
 
