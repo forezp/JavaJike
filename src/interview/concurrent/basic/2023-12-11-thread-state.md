@@ -2,7 +2,7 @@
 lang: zh-CN
 title: Thread状态、使用详解
 headerDepth: 1
-order: 3
+order: 5
 icon: gongchang
 collapsible: false
 description: Java线程状态
@@ -182,5 +182,88 @@ public class ThreadStateTest3 {
 
 }
 
+```
+
+
+
+## 两个线程交替打印
+
+
+
+```
+package io.github.forezp.concurrentlab.thread;
+
+public class ThreadDemo4 {
+
+    static int i = 0;
+
+    public static void main(String[] args) {
+        Object lock = new Object();
+        Thread t1 = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+
+                            synchronized (lock) {
+                                if (i % 2 == 0) {
+                                    try {
+                                        lock.wait();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                System.out.println(Thread.currentThread().getName() + " i=" + i);
+                                i++;
+                                lock.notifyAll();
+                            }
+                        }
+                    }
+                }
+        );
+
+        Thread t2 = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            synchronized (lock) {
+                                if (i % 2 == 1) {
+                                    try {
+
+                                        lock.wait();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                System.out.println(Thread.currentThread().getName() + " i=" + i);
+                                i++;
+                                lock.notifyAll();
+                            }
+                        }
+                    }
+                }
+        );
+
+        t1.start();
+        t2.start();
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
 ```
 

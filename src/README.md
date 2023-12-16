@@ -1,7 +1,7 @@
 ---
 home: true
 icon: home
-title: 方志朋,Java,Spring,Spring Boot,Spring Cloud,Java后端技术
+title: 个人生活文章
 heroImage: https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2023/11/14/hero3.png
 bgImage:
 bgImageDark:

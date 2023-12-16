@@ -14,6 +14,12 @@ export default navbar([
     link: "/observibility/metric/2023-08-29-introduction.md",
   },
   {
+    text: "个人生活文章",
+    icon: "zhenshikexin",
+    link: "/",
+  },
+
+  {
     text: "我的Github",
     icon: "github",
     link: "https://github.com/forezp",
