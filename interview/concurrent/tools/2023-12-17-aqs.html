@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="generator" content="VuePress 2.0.0-beta.67" />
+    <meta name="theme" content="VuePress Theme Hope" />
+    <meta property="og:url" content="https://www.fangzhipeng.com/interview/concurrent/tools/2023-12-17-aqs.html"><meta property="og:site_name" content="编程笔记"><meta property="og:title" content="Java并发技术AQS详解"><meta property="og:description" content="Java并发技术AQS详解"><meta property="og:type" content="article"><meta property="og:locale" content="zh-CN"><meta property="og:updated_time" content="2023-12-17T13:47:30.000Z"><meta property="article:author" content="fangzhipeng"><meta property="article:modified_time" content="2023-12-17T13:47:30.000Z"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Java并发技术AQS详解","image":[""],"dateModified":"2023-12-17T13:47:30.000Z","author":[{"@type":"Person","name":"fangzhipeng","url":"https://www.fangzhipeng.com"}]}</script><meta name="robots" content="all"><meta name="author" content="fangzhipeng"><meta name="keywords" content="SpringBoot, SpringCloud, Java, Java基础, 多线程, JVM, 虚拟机, 数据库, MySQL, Spring, Redis, MyBatis, 系统设计, 分布式, RPC, 高可用, 高并发"><script>var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c17de59570e96ad6f2e3d6c9e233c042";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();</script><title>Java并发技术AQS详解 | 编程笔记</title><meta name="description" content="Java并发技术AQS详解">
+    <style>
+      :root {
+        --bg-color: #fff;
+      }
+
+      html[data-theme="dark"] {
+        --bg-color: #1d1e1f;
+      }
+
+      html,
+      body {
+        background: var(--bg-color);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem("vuepress-theme-hope-scheme");
+      const systemDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      if (userMode === "dark" || (userMode !== "light" && systemDarkMode)) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    </script>
+    <link rel="preload" href="/assets/style-71f57f9f.css" as="style"><link rel="stylesheet" href="/assets/style-71f57f9f.css">
+    <link rel="modulepreload" href="/assets/app-2155adce.js"><link rel="modulepreload" href="/assets/2023-12-17-aqs.html-5d1ae901.js"><link rel="modulepreload" href="/assets/plugin-vue_export-helper-c27b6911.js"><link rel="modulepreload" href="/assets/2023-12-17-aqs.html-5ac66ca9.js">
+  </head>
+  <body>
+    <div id="app"><!--[--><!--[--><!--[--><span tabindex="-1"></span><a href="#main-content" class="vp-skip-link sr-only">跳至主要內容</a><!--]--><div class="theme-container has-toc"><!--[--><header id="navbar" class="vp-navbar"><div class="vp-navbar-start"><button type="button" class="vp-toggle-sidebar-button" title="Toggle Sidebar"><span class="icon"></span></button><!--[--><!----><!--]--><!--[--><a class="vp-link vp-brand vp-brand" href="/"><img class="vp-nav-logo" src="/logo.png" alt="编程笔记"><!----><span class="vp-site-name hide-in-pad">编程笔记</span></a><!--]--><!--[--><!----><!--]--></div><div class="vp-navbar-center"><!--[--><!----><!--]--><!--[--><nav class="vp-nav-links"><div class="nav-item hide-in-mobile"><a aria-label="Java面试" class="vp-link nav-link nav-link" href="/interview/basic/shortq/2023-11-14-java1.html"><span class="font-icon icon iconfont icon-java" style=""></span>Java面试<!----></a></div><div class="nav-item hide-in-mobile"><a aria-label="中间件学习" class="vp-link nav-link nav-link" href="/observibility/metric/2023-08-29-introduction.html"><span class="font-icon icon iconfont icon-smile" style=""></span>中间件学习<!----></a></div><div class="nav-item hide-in-mobile"><a aria-label="个人生活文章" class="vp-link nav-link nav-link" href="/"><span class="font-icon icon iconfont icon-zhenshikexin" style=""></span>个人生活文章<!----></a></div><div class="nav-item hide-in-mobile"><a href="https://github.com/forezp" rel="noopener noreferrer" target="_blank" aria-label="我的Github" class="nav-link"><span class="font-icon icon iconfont icon-github" style=""></span>我的Github<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">open in new window</span></span><!----></a></div><div class="nav-item hide-in-mobile"><a href="http://blog.fangzhipeng.com" rel="noopener noreferrer" target="_blank" aria-label="老版本博客" class="nav-link"><span class="font-icon icon iconfont icon-bxl-spring-boot" style=""></span>老版本博客<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">open in new window</span></span><!----></a></div></nav><!--]--><!--[--><!----><!--]--></div><div class="vp-navbar-end"><!--[--><!----><!--]--><!--[--><!----><div class="nav-item vp-repo"><a class="vp-repo-link" href="https://github.com/forezp/JavaJike" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" class="icon github-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="github icon" style="width:1.25rem;height:1.25rem;vertical-align:middle;"><path d="M511.957 21.333C241.024 21.333 21.333 240.981 21.333 512c0 216.832 140.544 400.725 335.574 465.664 24.49 4.395 32.256-10.07 32.256-23.083 0-11.69.256-44.245 0-85.205-136.448 29.61-164.736-64.64-164.736-64.64-22.315-56.704-54.4-71.765-54.4-71.765-44.587-30.464 3.285-29.824 3.285-29.824 49.195 3.413 75.179 50.517 75.179 50.517 43.776 75.008 114.816 53.333 142.762 40.79 4.523-31.66 17.152-53.377 31.19-65.537-108.971-12.458-223.488-54.485-223.488-242.602 0-53.547 19.114-97.323 50.517-131.67-5.035-12.33-21.93-62.293 4.779-129.834 0 0 41.258-13.184 134.912 50.346a469.803 469.803 0 0 1 122.88-16.554c41.642.213 83.626 5.632 122.88 16.554 93.653-63.488 134.784-50.346 134.784-50.346 26.752 67.541 9.898 117.504 4.864 129.834 31.402 34.347 50.474 78.123 50.474 131.67 0 188.586-114.73 230.016-224.042 242.09 17.578 15.232 33.578 44.672 33.578 90.454v135.85c0 13.142 7.936 27.606 32.854 22.87C862.25 912.597 1002.667 728.747 1002.667 512c0-271.019-219.648-490.667-490.71-490.667z"></path></svg></a></div><div class="nav-item hide-in-mobile"><button type="button" id="appearance-switch"><svg xmlns="http://www.w3.org/2000/svg" class="icon auto-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="auto icon" style="display:block;"><path d="M512 992C246.92 992 32 777.08 32 512S246.92 32 512 32s480 214.92 480 480-214.92 480-480 480zm0-840c-198.78 0-360 161.22-360 360 0 198.84 161.22 360 360 360s360-161.16 360-360c0-198.78-161.22-360-360-360zm0 660V212c165.72 0 300 134.34 300 300 0 165.72-134.28 300-300 300z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon dark-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="dark icon" style="display:none;"><path d="M524.8 938.667h-4.267a439.893 439.893 0 0 1-313.173-134.4 446.293 446.293 0 0 1-11.093-597.334A432.213 432.213 0 0 1 366.933 90.027a42.667 42.667 0 0 1 45.227 9.386 42.667 42.667 0 0 1 10.24 42.667 358.4 358.4 0 0 0 82.773 375.893 361.387 361.387 0 0 0 376.747 82.774 42.667 42.667 0 0 1 54.187 55.04 433.493 433.493 0 0 1-99.84 154.88 438.613 438.613 0 0 1-311.467 128z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon light-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="light icon" style="display:none;"><path d="M952 552h-80a40 40 0 0 1 0-80h80a40 40 0 0 1 0 80zM801.88 280.08a41 41 0 0 1-57.96-57.96l57.96-58a41.04 41.04 0 0 1 58 58l-58 57.96zM512 752a240 240 0 1 1 0-480 240 240 0 0 1 0 480zm0-560a40 40 0 0 1-40-40V72a40 40 0 0 1 80 0v80a40 40 0 0 1-40 40zm-289.88 88.08-58-57.96a41.04 41.04 0 0 1 58-58l57.96 58a41 41 0 0 1-57.96 57.96zM192 512a40 40 0 0 1-40 40H72a40 40 0 0 1 0-80h80a40 40 0 0 1 40 40zm30.12 231.92a41 41 0 0 1 57.96 57.96l-57.96 58a41.04 41.04 0 0 1-58-58l58-57.96zM512 832a40 40 0 0 1 40 40v80a40 40 0 0 1-80 0v-80a40 40 0 0 1 40-40zm289.88-88.08 58 57.96a41.04 41.04 0 0 1-58 58l-57.96-58a41 41 0 0 1 57.96-57.96z"></path></svg></button></div><!--[--><button type="button" class="search-pro-button" role="search" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" class="icon search-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="search icon"><path d="M192 480a256 256 0 1 1 512 0 256 256 0 0 1-512 0m631.776 362.496-143.2-143.168A318.464 318.464 0 0 0 768 480c0-176.736-143.264-320-320-320S128 303.264 128 480s143.264 320 320 320a318.016 318.016 0 0 0 184.16-58.592l146.336 146.368c12.512 12.48 32.768 12.48 45.28 0 12.48-12.512 12.48-32.768 0-45.28"></path></svg><div class="search-pro-placeholder">搜索</div><div class="search-pro-key-hints"><kbd class="search-pro-key">Ctrl</kbd><kbd class="search-pro-key">K</kbd></div></button><!--]--><!--]--><!--[--><!----><!--]--><button type="button" class="vp-toggle-navbar-button" aria-label="Toggle Navbar" aria-expanded="false" aria-controls="nav-screen"><span><span class="vp-top"></span><span class="vp-middle"></span><span class="vp-bottom"></span></span></button></div></header><!----><!--]--><!----><div class="toggle-sidebar-wrapper"><span class="arrow start"></span></div><aside id="sidebar" class="vp-sidebar"><!--[--><!----><!--]--><ul class="vp-sidebar-links"><li><section class="vp-sidebar-group"><button class="vp-sidebar-heading clickable" type="button"><span class="font-icon icon iconfont icon-star" style=""></span><span class="vp-sidebar-title">设计模式</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-heading clickable" type="button"><span class="font-icon icon iconfont icon-java" style=""></span><span class="vp-sidebar-title">java基础</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-heading clickable active" type="button"><span class="font-icon icon iconfont icon-kuaisugaoxiao" style=""></span><span class="vp-sidebar-title">并发编程</span><span class="vp-arrow down"></span></button><ul class="vp-sidebar-links"><li><section class="vp-sidebar-group"><p class="vp-sidebar-heading"><span class="font-icon icon iconfont icon-yuanchengchuantou" style=""></span><span class="vp-sidebar-title">并发理论</span><!----></p><ul class="vp-sidebar-links"><li><!--[--><a aria-label="理解可见性、原子性、有序性" class="vp-link nav-link vp-sidebar-link vp-sidebar-page nav-link vp-sidebar-link vp-sidebar-page" href="/interview/concurrent/basic/2023-12-09-concurrent-bug-src.html"><span class="font-icon icon iconfont icon-renminbi" style=""></span>理解可见性、原子性、有序性<!----></a><ul class="vp-sidebar-sub-headers"></ul><!--]--></li><li><!--[--><a aria-label="Java内存模式以及volatile详解" class="vp-link nav-link vp-sidebar-link vp-sidebar-page nav-link vp-sidebar-link vp-sidebar-page" href="/interview/concurrent/basic/2023-12-09-volatile.html"><span class="font-icon icon iconfont icon-kaifang" style=""></span>Java内存模式以及volatile详解<!----></a><ul class="vp-sidebar-sub-headers"></ul><!--]--></li><li><!--[--><a aria-label="Java synchronized关键字详解" class="vp-link nav-link vp-sidebar-link vp-sidebar-page nav-link vp-sidebar-link vp-sidebar-page" href="/interview/concurrent/basic/2023-12-10-synchronized.html"><span class="font-icon icon iconfont icon-gongchang" style=""></span>Java synchronized关键字详解<!----></a><ul class="vp-sidebar-sub-headers"></ul><!--]--></li><li><!--[--><a aria-label="Java死锁详解" class="vp-link nav-link vp-sidebar-link vp-sidebar-page nav-link vp-sidebar-link vp-sidebar-page" href="/interview/concurrent/basic/2023-12-10-deadlock.html"><span class="font-icon icon iconfont icon-gongchang" style=""></span>Java死锁详解<!----></a><ul class="vp-sidebar-sub-headers"></ul><!--]--></li><li><!--[--><a aria-label="Thread状态、使用详解" class="vp-link nav-link vp-sidebar-link vp-sidebar-page nav-link vp-sidebar-link vp-sidebar-page" href="/interview/concurrent/basic/2023-12-11-thread-state.html"><span class="font-icon icon iconfont icon-shijianzhouqi" style=""></span>Thread状态、使用详解<!----></a><ul class="vp-sidebar-sub-headers"></ul><!--]--></li></ul></section></li><li><section class="vp-sidebar-group"><p class="vp-sidebar-heading active"><span class="font-icon icon iconfont icon-shijianchuo" style=""></span><span class="vp-sidebar-title">并发工具类</span><!----></p><ul class="vp-sidebar-links"><li><!--[--><a aria-label="Java并发技术AQS详解" class="vp-link nav-link active vp-sidebar-link vp-sidebar-page active nav-link active vp-sidebar-link vp-sidebar-page active" href="/interview/concurrent/tools/2023-12-17-aqs.html"><span class="font-icon icon iconfont icon-shangyehuaquanqiu" style=""></span>Java并发技术AQS详解<!----></a><ul class="vp-sidebar-sub-headers"><li class="vp-sidebar-sub-header"><a aria-label="AQS简介" class="vp-link nav-link vp-sidebar-link vp-heading nav-link vp-sidebar-link vp-heading" href="/interview/concurrent/tools/2023-12-17-aqs.html#aqs简介"><!---->AQS简介<!----></a><ul class="vp-sidebar-sub-headers"></ul></li><li class="vp-sidebar-sub-header"><a aria-label="AQS核心思想" class="vp-link nav-link vp-sidebar-link vp-heading nav-link vp-sidebar-link vp-heading" href="/interview/concurrent/tools/2023-12-17-aqs.html#aqs核心思想"><!---->AQS核心思想<!----></a><ul class="vp-sidebar-sub-headers"></ul></li><li class="vp-sidebar-sub-header"><a aria-label="AQS 对资源的共享方式" class="vp-link nav-link vp-sidebar-link vp-heading nav-link vp-sidebar-link vp-heading" href="/interview/concurrent/tools/2023-12-17-aqs.html#aqs-对资源的共享方式"><!---->AQS 对资源的共享方式<!----></a><ul class="vp-sidebar-sub-headers"></ul></li><li class="vp-sidebar-sub-header"><a aria-label="AQS源码解析" class="vp-link nav-link vp-sidebar-link vp-heading nav-link vp-sidebar-link vp-heading" href="/interview/concurrent/tools/2023-12-17-aqs.html#aqs源码解析"><!---->AQS源码解析<!----></a><ul class="vp-sidebar-sub-headers"></ul></li><li class="vp-sidebar-sub-header"><a aria-label="手写一个AQS" class="vp-link nav-link vp-sidebar-link vp-heading nav-link vp-sidebar-link vp-heading" href="/interview/concurrent/tools/2023-12-17-aqs.html#手写一个aqs"><!---->手写一个AQS<!----></a><ul class="vp-sidebar-sub-headers"></ul></li><li class="vp-sidebar-sub-header"><a aria-label="参考资料" class="vp-link nav-link vp-sidebar-link vp-heading nav-link vp-sidebar-link vp-heading" href="/interview/concurrent/tools/2023-12-17-aqs.html#参考资料"><!---->参考资料<!----></a><ul class="vp-sidebar-sub-headers"></ul></li></ul><!--]--></li></ul></section></li></ul></section></li></ul><!--[--><!----><!--]--></aside><!--[--><main id="main-content" class="vp-page"><!--[--><!----><!----><nav class="vp-breadcrumb disable"></nav><div class="vp-page-title"><h1><span class="font-icon icon iconfont icon-shangyehuaquanqiu" style=""></span>Java并发技术AQS详解</h1><div class="page-info"><span class="page-author-info" aria-label="作者🖊" data-balloon-pos="down"><svg xmlns="http://www.w3.org/2000/svg" class="icon author-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="author icon"><path d="M649.6 633.6c86.4-48 147.2-144 147.2-249.6 0-160-128-288-288-288s-288 128-288 288c0 108.8 57.6 201.6 147.2 249.6-121.6 48-214.4 153.6-240 288-3.2 9.6 0 19.2 6.4 25.6 3.2 9.6 12.8 12.8 22.4 12.8h704c9.6 0 19.2-3.2 25.6-12.8 6.4-6.4 9.6-16 6.4-25.6-25.6-134.4-121.6-240-243.2-288z"></path></svg><span><a class="page-author-item" href="https://www.fangzhipeng.com" target="_blank" rel="noopener noreferrer">fangzhipeng</a></span><span property="author" content="fangzhipeng"></span></span><!----><!----><span class="page-date-info" aria-label="写作日期📅" data-balloon-pos="down"><svg xmlns="http://www.w3.org/2000/svg" class="icon calendar-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="calendar icon"><path d="M716.4 110.137c0-18.753-14.72-33.473-33.472-33.473-18.753 0-33.473 14.72-33.473 33.473v33.473h66.993v-33.473zm-334.87 0c0-18.753-14.72-33.473-33.473-33.473s-33.52 14.72-33.52 33.473v33.473h66.993v-33.473zm468.81 33.52H716.4v100.465c0 18.753-14.72 33.473-33.472 33.473a33.145 33.145 0 01-33.473-33.473V143.657H381.53v100.465c0 18.753-14.72 33.473-33.473 33.473a33.145 33.145 0 01-33.473-33.473V143.657H180.6A134.314 134.314 0 0046.66 277.595v535.756A134.314 134.314 0 00180.6 947.289h669.74a134.36 134.36 0 00133.94-133.938V277.595a134.314 134.314 0 00-133.94-133.938zm33.473 267.877H147.126a33.145 33.145 0 01-33.473-33.473c0-18.752 14.72-33.473 33.473-33.473h736.687c18.752 0 33.472 14.72 33.472 33.473a33.145 33.145 0 01-33.472 33.473z"></path></svg><span><!----></span><meta property="datePublished" content="2023-12-17T13:47:30.000Z"></span><!----><span class="page-word-info" aria-label="字数🔠" data-balloon-pos="down"><svg xmlns="http://www.w3.org/2000/svg" class="icon word-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="word icon"><path d="M518.217 432.64V73.143A73.143 73.143 0 01603.43 1.097a512 512 0 01419.474 419.474 73.143 73.143 0 01-72.046 85.212H591.36a73.143 73.143 0 01-73.143-73.143z"></path><path d="M493.714 566.857h340.297a73.143 73.143 0 0173.143 85.577A457.143 457.143 0 11371.566 117.76a73.143 73.143 0 0185.577 73.143v339.383a36.571 36.571 0 0036.571 36.571z"></path></svg><span>约 5559 字</span><meta property="wordCount" content="5559"></span><span class="page-reading-time-info" aria-label="阅读时间⌛" data-balloon-pos="down"><svg xmlns="http://www.w3.org/2000/svg" class="icon timer-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="timer icon"><path d="M799.387 122.15c4.402-2.978 7.38-7.897 7.38-13.463v-1.165c0-8.933-7.38-16.312-16.312-16.312H256.33c-8.933 0-16.311 7.38-16.311 16.312v1.165c0 5.825 2.977 10.874 7.637 13.592 4.143 194.44 97.22 354.963 220.201 392.763-122.204 37.542-214.893 196.511-220.2 389.397-4.661 5.049-7.638 11.651-7.638 19.03v5.825h566.49v-5.825c0-7.379-2.849-13.981-7.509-18.9-5.049-193.016-97.867-351.985-220.2-389.527 123.24-37.67 216.446-198.453 220.588-392.892zM531.16 450.445v352.632c117.674 1.553 211.787 40.778 211.787 88.676H304.097c0-48.286 95.149-87.382 213.728-88.676V450.445c-93.077-3.107-167.901-81.297-167.901-177.093 0-8.803 6.99-15.793 15.793-15.793 8.803 0 15.794 6.99 15.794 15.793 0 80.261 63.69 145.635 142.01 145.635s142.011-65.374 142.011-145.635c0-8.803 6.99-15.793 15.794-15.793s15.793 6.99 15.793 15.793c0 95.019-73.789 172.82-165.96 177.093z"></path></svg><span>大约 19 分钟</span><meta property="timeRequired" content="PT19M"></span></div><hr></div><div class="toc-place-holder"><aside id="toc"><!--[--><!----><!--]--><div class="toc-header">此页内容<button type="button" class="print-button" title="打印"><svg xmlns="http://www.w3.org/2000/svg" class="icon print-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="print icon"><path d="M819.2 364.8h-44.8V128c0-17.067-14.933-32-32-32H281.6c-17.067 0-32 14.933-32 32v236.8h-44.8C145.067 364.8 96 413.867 96 473.6v192c0 59.733 49.067 108.8 108.8 108.8h44.8V896c0 17.067 14.933 32 32 32h460.8c17.067 0 32-14.933 32-32V774.4h44.8c59.733 0 108.8-49.067 108.8-108.8v-192c0-59.733-49.067-108.8-108.8-108.8zM313.6 160h396.8v204.8H313.6V160zm396.8 704H313.6V620.8h396.8V864zM864 665.6c0 25.6-19.2 44.8-44.8 44.8h-44.8V588.8c0-17.067-14.933-32-32-32H281.6c-17.067 0-32 14.933-32 32v121.6h-44.8c-25.6 0-44.8-19.2-44.8-44.8v-192c0-25.6 19.2-44.8 44.8-44.8h614.4c25.6 0 44.8 19.2 44.8 44.8v192z"></path></svg></button></div><div class="toc-wrapper"><ul class="toc-list"><!--[--><li class="toc-item"><a class="vp-link toc-link level2 toc-link level2" href="/#aqs简介">AQS简介</a></li><!----><!--]--><!--[--><li class="toc-item"><a class="vp-link toc-link level2 toc-link level2" href="/#aqs核心思想">AQS核心思想</a></li><!----><!--]--><!--[--><li class="toc-item"><a class="vp-link toc-link level2 toc-link level2" href="/#aqs-对资源的共享方式">AQS 对资源的共享方式</a></li><!----><!--]--><!--[--><li class="toc-item"><a class="vp-link toc-link level2 toc-link level2" href="/#aqs源码解析">AQS源码解析</a></li><!----><!--]--><!--[--><li class="toc-item"><a class="vp-link toc-link level2 toc-link level2" href="/#手写一个aqs">手写一个AQS</a></li><!----><!--]--><!--[--><li class="toc-item"><a class="vp-link toc-link level2 toc-link level2" href="/#参考资料">参考资料</a></li><!----><!--]--></ul><div class="toc-marker" style="top:-1.7rem;"></div></div><!--[--><!----><!--]--></aside></div><!----><div class="theme-hope-content"><h2 id="aqs简介" tabindex="-1"><a class="header-anchor" href="#aqs简介" aria-hidden="true">#</a> AQS简介</h2><p>AQS（AbstractQueuedSynchronizer）是一个用于构建锁和同步器的框架，它提供了一种基于FIFO等待队列的机制。AQS的设计使得开发者能够相对轻松地实现自定义的同步器，同时也为Java标准库中的诸如<code>ReentrantLock</code>、<code>Semaphore</code>、<code>ReentrantReadWriteLock</code>、<code>SynchronousQueue</code>、<code>FutureTask</code>等同步器提供了基础支持。</p><h2 id="aqs核心思想" tabindex="-1"><a class="header-anchor" href="#aqs核心思想" aria-hidden="true">#</a> AQS核心思想</h2><p>AQS（AbstractQueuedSynchronizer）的核心思想是基于一个先进先出（FIFO）的等待队列来管理线程的争用，并通过内置的状态变量和原子操作来实现对共享资源的安全访问和控制。</p><p>等待队列：AQS 使用一个先进先出的等待队列来管理等待获取同步器的线程。当某个线程无法获取到同步器时（如锁已被其他线程持有），它会被放入等待队列中，直到它能够获得同步器或者被中断。</p><figure><img src="https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2023/12/17/image-20231217171236598.png" alt="image-20231217171236598" tabindex="0" loading="lazy"><figcaption>image-20231217171236598</figcaption></figure><p>内置状态变量：AQS 内部维护了一个状态变量，用于表示同步器的状态。这个状态可以是自定义的，根据具体需求来决定如何利用这个状态来控制并发访问。</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>private volatile int state;//共享变量，使用volatile修饰保证线程可见性
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><p>状态信息通过procted类型的getState，setState，compareAndSetState进行操作:</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>//返回同步状态的当前值
+protected final int getState() {  
+        return state;
+}
+ // 设置同步状态的值
+protected final void setState(int newState) { 
+        state = newState;
+}
+//原子地(CAS操作)将同步状态值设置为给定值update如果当前同步状态的值等于expect(期望值)
+protected final boolean compareAndSetState(int expect, int update) {
+        return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
+}
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><figure><img src="https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2023/12/17/image-20231217172210727.jpeg" alt="image-20231217172210727" tabindex="0" loading="lazy"><figcaption>image-20231217172210727</figcaption></figure><p>状态变迁与线程调度：AQS 负责管理线程的状态变迁，从而实现线程的调度和协作。当一个线程释放同步器时，AQS 会从等待队列中选取一个线程唤醒，使其进入就绪状态，然后与其他就绪状态的线程竞争执行权。</p><h2 id="aqs-对资源的共享方式" tabindex="-1"><a class="header-anchor" href="#aqs-对资源的共享方式" aria-hidden="true">#</a> AQS 对资源的共享方式</h2><p>AQS定义两种资源共享方式</p><ul><li>Exclusive(独占)：只有一个线程能执行，如ReentrantLock。又可分为公平锁和非公平锁： <ul><li>公平锁：按照线程在队列中的排队顺序，先到者先拿到锁</li><li>非公平锁：当线程要获取锁时，无视队列顺序直接去抢锁，谁抢到就是谁的</li></ul></li><li>Share(共享)：多个线程可同时执行，如Semaphore/CountDownLatch。Semaphore、CountDownLatCh、 CyclicBarrier、ReadWriteLock 我们都会在后面讲到。</li></ul><p>ReentrantReadWriteLock 可以看成是组合式，因为ReentrantReadWriteLock也就是读写锁允许多个线程同时对某一资源进行读。</p><p>不同的自定义同步器争用共享资源的方式也不同。自定义同步器在实现时只需要实现共享资源 state 的获取与释放方式即可，至于具体线程等待队列的维护(如获取资源失败入队/唤醒出队等)，AQS已经在上层已经帮我们实现好了。</p><h2 id="aqs源码解析" tabindex="-1"><a class="header-anchor" href="#aqs源码解析" aria-hidden="true">#</a> AQS源码解析</h2><h3 id="类的继承关系" tabindex="-1"><a class="header-anchor" href="#类的继承关系" aria-hidden="true">#</a> 类的继承关系</h3><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>public abstract class AbstractQueuedSynchronizer
+    extends AbstractOwnableSynchronizer
+    implements java.io.Serializable
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>说明：从类继承关系可知，AbstractQueuedSynchronizer继承自AbstractOwnableSynchronizer抽象类，并且实现了Serializable接口，可以进行序列化。而AbstractOwnableSynchronizer抽象类的源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>public abstract class AbstractOwnableSynchronizer
+    implements java.io.Serializable {
+    
+    // 版本序列号
+    private static final long serialVersionUID = 3737899427754241961L;
+    // 构造函数
+    protected AbstractOwnableSynchronizer() { }
+    // 独占模式下的线程
+    private transient Thread exclusiveOwnerThread;
+    
+    // 设置独占线程 
+    protected final void setExclusiveOwnerThread(Thread thread) {
+        exclusiveOwnerThread = thread;
+    }
+    
+    // 获取独占线程 
+    protected final Thread getExclusiveOwnerThread() {
+        return exclusiveOwnerThread;
+    }
+}
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>AbstractOwnableSynchronizer抽象类中，可以设置独占资源线程和获取独占资源线程。分别为setExclusiveOwnerThread与getExclusiveOwnerThread方法，这两个方法会被子类调用。</p><h3 id="类的内部类" tabindex="-1"><a class="header-anchor" href="#类的内部类" aria-hidden="true">#</a> 类的内部类</h3><p>AbstractQueuedSynchronizer类有两个内部类，分别为Node类与ConditionObject类。下面分别做介绍。</p><h4 id="node类" tabindex="-1"><a class="header-anchor" href="#node类" aria-hidden="true">#</a> Node类</h4><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>static final class Node {
+        // 模式，分为共享与独占
+        // 共享模式
+        static final Node SHARED = new Node();
+        // 独占模式
+        static final Node EXCLUSIVE = null;        
+        // 结点状态
+        // CANCELLED，值为1，表示当前的线程被取消
+        // SIGNAL，值为-1，表示当前节点的后继节点包含的线程需要运行，也就是unpark
+        // CONDITION，值为-2，表示当前节点在等待condition，也就是在condition队列中
+        // PROPAGATE，值为-3，表示当前场景下后续的acquireShared能够得以执行
+        // 值为0，表示当前节点在sync队列中，等待着获取锁
+        static final int CANCELLED =  1;
+        static final int SIGNAL    = -1;
+        static final int CONDITION = -2;
+        static final int PROPAGATE = -3;        
+
+        // 结点状态
+        volatile int waitStatus;        
+        // 前驱结点
+        volatile Node prev;    
+        // 后继结点
+        volatile Node next;        
+        // 结点所对应的线程
+        volatile Thread thread;        
+        // 下一个等待者
+        Node nextWaiter;
+        
+        // 结点是否在共享模式下等待
+        final boolean isShared() {
+            return nextWaiter == SHARED;
+        }
+        
+        // 获取前驱结点，若前驱结点为空，抛出异常
+        final Node predecessor() throws NullPointerException {
+            // 保存前驱结点
+            Node p = prev; 
+            if (p == null) // 前驱结点为空，抛出异常
+                throw new NullPointerException();
+            else // 前驱结点不为空，返回
+                return p;
+        }
+        
+        // 无参构造函数
+        Node() {    // Used to establish initial head or SHARED marker
+        }
+        
+        // 构造函数
+         Node(Thread thread, Node mode) {    // Used by addWaiter
+            this.nextWaiter = mode;
+            this.thread = thread;
+        }
+        
+        // 构造函数
+        Node(Thread thread, int waitStatus) { // Used by Condition
+            this.waitStatus = waitStatus;
+            this.thread = thread;
+        }
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>每个线程被阻塞的线程都会被封装成一个Node结点，放入队列。每个节点包含了一个Thread类型的引用，并且每个节点都存在一个状态，具体状态如下。</p><ul><li>CANCELLED，值为1，表示当前的线程被取消。</li><li>SIGNAL，值为-1，表示当前节点的后继节点包含的线程需要运行，需要进行unpark操作。</li><li>CONDITION，值为-2，表示当前节点在等待condition，也就是在condition queue中。</li><li>PROPAGATE，值为-3，表示当前场景下后续的acquireShared能够得以执行。</li><li>值为0，表示当前节点在sync queue中，等待着获取锁。</li></ul><h4 id="conditionobject类" tabindex="-1"><a class="header-anchor" href="#conditionobject类" aria-hidden="true">#</a> ConditionObject类</h4><p>此类实现了Condition接口，Condition接口定义了条件操作规范，具体如下：</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>public interface Condition {
+
+    // 等待，当前线程在接到信号或被中断之前一直处于等待状态
+    void await() throws InterruptedException;
+    
+    // 等待，当前线程在接到信号之前一直处于等待状态，不响应中断
+    void awaitUninterruptibly();
+    
+    //等待，当前线程在接到信号、被中断或到达指定等待时间之前一直处于等待状态 
+    long awaitNanos(long nanosTimeout) throws InterruptedException;
+    
+    // 等待，当前线程在接到信号、被中断或到达指定等待时间之前一直处于等待状态。此方法在行为上等效于：awaitNanos(unit.toNanos(time)) &gt; 0
+    boolean await(long time, TimeUnit unit) throws InterruptedException;
+    
+    // 等待，当前线程在接到信号、被中断或到达指定最后期限之前一直处于等待状态
+    boolean awaitUntil(Date deadline) throws InterruptedException;
+    
+    // 唤醒一个等待线程。如果所有的线程都在等待此条件，则选择其中的一个唤醒。在从 await 返回之前，该线程必须重新获取锁。
+    void signal();
+    
+    // 唤醒所有等待线程。如果所有的线程都在等待此条件，则唤醒所有线程。在从 await 返回之前，每个线程都必须重新获取锁。
+    void signalAll();
+}
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>Condition接口中定义了await、signal函数，用来等待条件、释放条件。之后会详细分析CondtionObject的源码。</p><h3 id="类的属性" tabindex="-1"><a class="header-anchor" href="#类的属性" aria-hidden="true">#</a> 类的属性</h3><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>public abstract class AbstractQueuedSynchronizer
+    extends AbstractOwnableSynchronizer
+    implements java.io.Serializable {    
+    // 版本号
+    private static final long serialVersionUID = 7373984972572414691L;    
+    // 头结点
+    private transient volatile Node head;    
+    // 尾结点
+    private transient volatile Node tail;    
+    // 状态
+    private volatile int state;    
+    // 自旋时间
+    static final long spinForTimeoutThreshold = 1000L;
+    
+    // Unsafe类实例
+    private static final Unsafe unsafe = Unsafe.getUnsafe();
+    // state内存偏移地址
+    private static final long stateOffset;
+    // head内存偏移地址
+    private static final long headOffset;
+    // state内存偏移地址
+    private static final long tailOffset;
+    // tail内存偏移地址
+    private static final long waitStatusOffset;
+    // next内存偏移地址
+    private static final long nextOffset;
+    // 静态初始化块
+    static {
+        try {
+            stateOffset = unsafe.objectFieldOffset
+                (AbstractQueuedSynchronizer.class.getDeclaredField(&quot;state&quot;));
+            headOffset = unsafe.objectFieldOffset
+                (AbstractQueuedSynchronizer.class.getDeclaredField(&quot;head&quot;));
+            tailOffset = unsafe.objectFieldOffset
+                (AbstractQueuedSynchronizer.class.getDeclaredField(&quot;tail&quot;));
+            waitStatusOffset = unsafe.objectFieldOffset
+                (Node.class.getDeclaredField(&quot;waitStatus&quot;));
+            nextOffset = unsafe.objectFieldOffset
+                (Node.class.getDeclaredField(&quot;next&quot;));
+
+        } catch (Exception ex) { throw new Error(ex); }
+    }
+}
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>属性中包含了头结点head，尾结点tail，状态state、自旋时间spinForTimeoutThreshold，还有AbstractQueuedSynchronizer抽象的属性在内存中的偏移地址，通过该偏移地址，可以获取和设置该属性的值，同时还包括一个静态初始化块，用于加载内存偏移地址。</p><h3 id="类的构造函数" tabindex="-1"><a class="header-anchor" href="#类的构造函数" aria-hidden="true">#</a> 类的构造函数</h3><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>protected AbstractQueuedSynchronizer() { }    
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><p>此类构造函数为从抽象构造函数，供子类调用。</p><h3 id="类的核心函数" tabindex="-1"><a class="header-anchor" href="#类的核心函数" aria-hidden="true">#</a> 类的核心函数</h3><h4 id="acquire函数" tabindex="-1"><a class="header-anchor" href="#acquire函数" aria-hidden="true">#</a> acquire函数</h4><p>该函数以独占模式获取(资源)，忽略中断，即线程在aquire过程中，中断此线程是无效的。源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>public final void acquire(int arg) {
+    if (!tryAcquire(arg) &amp;&amp;
+        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+         　　selfInterrupt();
+}
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>由上述源码可以知道，当一个线程调用acquire时，调用方法流程如下。</p><figure><img src="https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2023/12/17/616953-20160404112240734-653491814.png" alt="img" tabindex="0" loading="lazy"><figcaption>img</figcaption></figure><ul><li>首先调用tryAcquire函数，调用此方法的线程会试图在独占模式下获取对象状态。此方法应该查询是否允许它在独占模式下获取对象状态，如果允许，则获取它。在AbstractQueuedSynchronizer源码中默认会抛出一个异常，即需要子类去重写此函数完成自己的逻辑。之后会进行分析。</li><li>若tryAcquire失败，则调用addWaiter函数，addWaiter函数完成的功能是将调用此方法的线程封装成为一个结点并放入Sync queue。</li><li>调用acquireQueued函数，此函数完成的功能是Sync queue中的结点不断尝试获取资源，若成功，则返回true，否则，返回false。</li><li>由于tryAcquire默认实现是抛出异常，所以此时，不进行分析，之后会结合一个例子进行分析。</li></ul><p>首先分析addWaiter函数</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>// 添加等待者
+    private Node addWaiter(Node mode) {
+        // 新生成一个结点，默认为独占模式
+        Node node = new Node(Thread.currentThread(), mode);
+        // Try the fast path of enq; backup to full enq on failure
+        // 保存尾结点
+        Node pred = tail;
+        if (pred != null) { // 尾结点不为空，即已经被初始化
+            // 将node结点的prev域连接到尾结点
+            node.prev = pred; 
+            if (compareAndSetTail(pred, node)) { // 比较pred是否为尾结点，是则将尾结点设置为node 
+                // 设置尾结点的next域为node
+                pred.next = node;
+                return node; // 返回新生成的结点
+            }
+        }
+        enq(node); // 尾结点为空(即还没有被初始化过)，或者是compareAndSetTail操作失败，则入队列
+        return node;
+    }
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>addWaiter函数使用快速添加的方式往sync queue尾部添加结点，如果sync queue队列还没有初始化，则会使用enq插入队列中，enq方法源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>// 入队列
+    private Node enq(final Node node) {
+        for (;;) { // 无限循环，确保结点能够成功入队列
+            // 保存尾结点
+            Node t = tail;
+            if (t == null) { // 尾结点为空，即还没被初始化
+                if (compareAndSetHead(new Node())) // 头结点为空，并设置头结点为新生成的结点
+                    tail = head; // 头结点与尾结点都指向同一个新生结点
+            } else { // 尾结点不为空，即已经被初始化过
+                // 将node结点的prev域连接到尾结点
+                node.prev = t; 
+                if (compareAndSetTail(t, node)) { // 比较结点t是否为尾结点，若是则将尾结点设置为node
+                    // 设置尾结点的next域为node
+                    t.next = node; 
+                    return t; // 返回尾结点
+                }
+            }
+        }
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>enq函数会使用无限循环来确保节点的成功插入。</p><p>现在，分析acquireQueue函数。其源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>
+// sync队列中的结点在独占且忽略中断的模式下获取(资源)
+    final boolean acquireQueued(final Node node, int arg) {
+        // 标志
+        boolean failed = true;
+        try {
+            // 中断标志
+            boolean interrupted = false;
+            for (;;) { // 无限循环
+                // 获取node节点的前驱结点
+                final Node p = node.predecessor(); 
+                if (p == head &amp;&amp; tryAcquire(arg)) { // 前驱为头结点并且成功获得锁
+                    setHead(node); // 设置头结点
+                    p.next = null; // help GC
+                    failed = false; // 设置标志
+                    return interrupted; 
+                }
+                if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                    parkAndCheckInterrupt())
+                    interrupted = true;
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>首先获取当前节点的前驱节点，如果前驱节点是头结点并且能够获取(资源)，代表该当前节点能够占有锁，设置头结点为当前节点，返回。否则，调用shouldParkAfterFailedAcquire和parkAndCheckInterrupt函数，首先，我们看shouldParkAfterFailedAcquire函数，代码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>// 当获取(资源)失败后，检查并且更新结点状态
+    private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+        // 获取前驱结点的状态
+        int ws = pred.waitStatus;
+        if (ws == Node.SIGNAL) // 状态为SIGNAL，为-1
+            /*
+             * This node has already set status asking a release
+             * to signal it, so it can safely park.
+             */
+            // 可以进行park操作
+            return true; 
+        if (ws &gt; 0) { // 表示状态为CANCELLED，为1
+            /*
+             * Predecessor was cancelled. Skip over predecessors and
+             * indicate retry.
+             */
+            do {
+                node.prev = pred = pred.prev;
+            } while (pred.waitStatus &gt; 0); // 找到pred结点前面最近的一个状态不为CANCELLED的结点
+            // 赋值pred结点的next域
+            pred.next = node; 
+        } else { // 为PROPAGATE -3 或者是0 表示无状态,(为CONDITION -2时，表示此节点在condition queue中) 
+            /*
+             * waitStatus must be 0 or PROPAGATE.  Indicate that we
+             * need a signal, but don&#39;t park yet.  Caller will need to
+             * retry to make sure it cannot acquire before parking.
+             */
+            // 比较并设置前驱结点的状态为SIGNAL
+            compareAndSetWaitStatus(pred, ws, Node.SIGNAL); 
+        }
+        // 不能进行park操作
+        return false;
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>只有当该节点的前驱结点的状态为SIGNAL时，才可以对该结点所封装的线程进行park操作。否则，将不能进行park操作。再看parkAndCheckInterrupt函数，源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>// 进行park操作并且返回该线程是否被中断
+    private final boolean parkAndCheckInterrupt() {
+        // 在许可可用之前禁用当前线程，并且设置了blocker
+        LockSupport.park(this);
+        return Thread.interrupted(); // 当前线程是否已被中断，并清除中断标记位
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>parkAndCheckInterrupt函数里的逻辑是首先执行park操作，即禁用当前线程，然后返回该线程是否已经被中断。再看final块中的cancelAcquire函数，其源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>// 取消继续获取(资源)
+    private void cancelAcquire(Node node) {
+        // Ignore if node doesn&#39;t exist
+        // node为空，返回
+        if (node == null)
+            return;
+        // 设置node结点的thread为空
+        node.thread = null;
+
+        // Skip cancelled predecessors
+        // 保存node的前驱结点
+        Node pred = node.prev;
+        while (pred.waitStatus &gt; 0) // 找到node前驱结点中第一个状态小于0的结点，即不为CANCELLED状态的结点
+            node.prev = pred = pred.prev;
+
+        // predNext is the apparent node to unsplice. CASes below will
+        // fail if not, in which case, we lost race vs another cancel
+        // or signal, so no further action is necessary.
+        // 获取pred结点的下一个结点
+        Node predNext = pred.next;
+
+        // Can use unconditional write instead of CAS here.
+        // After this atomic step, other Nodes can skip past us.
+        // Before, we are free of interference from other threads.
+        // 设置node结点的状态为CANCELLED
+        node.waitStatus = Node.CANCELLED;
+
+        // If we are the tail, remove ourselves.
+        if (node == tail &amp;&amp; compareAndSetTail(node, pred)) { // node结点为尾结点，则设置尾结点为pred结点
+            // 比较并设置pred结点的next节点为null
+            compareAndSetNext(pred, predNext, null); 
+        } else { // node结点不为尾结点，或者比较设置不成功
+            // If successor needs signal, try to set pred&#39;s next-link
+            // so it will get one. Otherwise wake it up to propagate.
+            int ws;
+            if (pred != head &amp;&amp;
+                ((ws = pred.waitStatus) == Node.SIGNAL ||
+                 (ws &lt;= 0 &amp;&amp; compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &amp;&amp;
+                pred.thread != null) { // （pred结点不为头结点，并且pred结点的状态为SIGNAL）或者 
+                                    // pred结点状态小于等于0，并且比较并设置等待状态为SIGNAL成功，并且pred结点所封装的线程不为空
+                // 保存结点的后继
+                Node next = node.next;
+                if (next != null &amp;&amp; next.waitStatus &lt;= 0) // 后继不为空并且后继的状态小于等于0
+                    compareAndSetNext(pred, predNext, next); // 比较并设置pred.next = next;
+            } else {
+                unparkSuccessor(node); // 释放node的前一个结点
+            }
+
+            node.next = node; // help GC
+        }
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>该函数完成的功能就是取消当前线程对资源的获取，即设置该结点的状态为CANCELLED，接着我们再看unparkSuccessor函数，源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>// 释放后继结点
+    private void unparkSuccessor(Node node) {
+        /*
+         * If status is negative (i.e., possibly needing signal) try
+         * to clear in anticipation of signalling.  It is OK if this
+         * fails or if status is changed by waiting thread.
+         */
+        // 获取node结点的等待状态
+        int ws = node.waitStatus;
+        if (ws &lt; 0) // 状态值小于0，为SIGNAL -1 或 CONDITION -2 或 PROPAGATE -3
+            // 比较并且设置结点等待状态，设置为0
+            compareAndSetWaitStatus(node, ws, 0);
+
+        /*
+         * Thread to unpark is held in successor, which is normally
+         * just the next node.  But if cancelled or apparently null,
+         * traverse backwards from tail to find the actual
+         * non-cancelled successor.
+         */
+        // 获取node节点的下一个结点
+        Node s = node.next;
+        if (s == null || s.waitStatus &gt; 0) { // 下一个结点为空或者下一个节点的等待状态大于0，即为CANCELLED
+            // s赋值为空
+            s = null; 
+            // 从尾结点开始从后往前开始遍历
+            for (Node t = tail; t != null &amp;&amp; t != node; t = t.prev)
+                if (t.waitStatus &lt;= 0) // 找到等待状态小于等于0的结点，找到最前的状态小于等于0的结点
+                    // 保存结点
+                    s = t;
+        }
+        if (s != null) // 该结点不为为空，释放许可
+            LockSupport.unpark(s.thread);
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>该函数的作用就是为了释放node节点的后继结点。</p><p>对于cancelAcquire与unparkSuccessor函数，如下示意图可以清晰的表示。</p><figure><img src="https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2023/12/17/616953-20160406221022500-1247417874.png" alt="img" tabindex="0" loading="lazy"><figcaption>img</figcaption></figure><p>其中node为参数，在执行完cancelAcquire函数后的效果就是unpark了s结点所包含的t4线程。</p><p>现在，再来看acquireQueued函数的整个的逻辑。逻辑如下</p><p>① 判断结点的前驱是否为head并且是否成功获取(资源)。</p><p>② 若步骤①均满足，则设置结点为head，之后会判断是否finally模块，然后返回。</p><p>③ 若步骤①不满足，则判断是否需要park当前线程，是否需要park当前线程的逻辑是判断结点的前驱结点的状态是否为SIGNAL，若是，则park当前结点，否则，不进行park操作。</p><p>④ 若park了当前线程，之后某个线程对本线程unpark后，并且本线程也获得机会运行。那么，将会继续进行步骤①的判断。</p><h4 id="release" tabindex="-1"><a class="header-anchor" href="#release" aria-hidden="true">#</a> release</h4><p>以独占模式释放对象，其源码如下</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>public final boolean release(int arg) {
+        if (tryRelease(arg)) { // 释放成功
+            // 保存头结点
+            Node h = head; 
+            if (h != null &amp;&amp; h.waitStatus != 0) // 头结点不为空并且头结点状态不为0
+                unparkSuccessor(h); //释放头结点的后继结点
+            return true;
+        }
+        return false;
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>说明：其中，tryRelease的默认实现是抛出异常，需要具体的子类实现，如果tryRelease成功，那么如果头结点不为空并且头结点的状态不为0，则释放头结点的后继结点，unparkSuccessor函数已经分析过，不再累赘。</p><p>对于其他函数我们也可以分析，与前面分析的函数大同小异，所以，不再累赘。</p><h2 id="手写一个aqs" tabindex="-1"><a class="header-anchor" href="#手写一个aqs" aria-hidden="true">#</a> 手写一个AQS</h2><p>根据AQS的源码，我们手写一个简单的AQS，代码如下：</p><div class="language-text line-numbers-mode" data-ext="text"><pre class="language-text"><code>package io.github.forezp.concurrentlab.aqs;
+
+import sun.misc.Unsafe;
+
+import java.lang.reflect.Field;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.LockSupport;
+
+public class AQS {
+
+    //用来记录当前加锁状态，记录加锁次数，
+    //值为0/1，为1时表示已经有一个线程持有了锁
+    private volatile int state = 0;
+
+    //表示当前只有锁的对象
+    private Thread localHolder;
+
+    //定义一个线程安全(底层是使用CAS算法保证线程安全的)的队列，用于保存此时没有获取到锁的线程
+    private ConcurrentLinkedQueue&lt;Thread&gt; waiters = new ConcurrentLinkedQueue&lt;&gt;();
+
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public Thread getLocalHolder() {
+        return localHolder;
+    }
+
+    public void setLocalHolder(Thread localHolder) {
+        this.localHolder = localHolder;
+    }
+
+    //尝试进行加锁的算法
+    public boolean acquire() {
+        //CAS比较与交换算法，保证任意时刻只有一个线程可以拿到
+        //当前线程
+        Thread current = Thread.currentThread();
+        //获取到当前state初始值
+        int c = getState();
+        if (c == 0) { //目前锁还没有被持有
+            //如果等待队列中没有进程（实现公平锁）或者当前线程是等待队列中第一个线程，并且此线程修改成功了(加锁成功)，则设置持有锁的线程为本线程;
+            if ((waiters.size() == 0 || current == waiters.peek()) &amp;&amp; compareAndSwapState(0, 1)) {
+                setLocalHolder(current);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //加锁
+    public void lock(){
+        //如果加锁成功
+        if(acquire()){
+            return;
+        }
+        //当前线程
+        Thread current = Thread.currentThread();
+        //没有获取成功，将线程放入等待队列中
+        waiters.add(current);
+
+        //如果没有加锁成功，则使此线程一直自旋在本方法
+        for (;;){
+            //让步出线程
+            //1：Thread.yield();但是循环之后还是在占用cpu，不推荐
+            //2：Thread.sleep(1000);不推荐，原因如下
+            //（1）：设置时常大之后，其他线程已经释放锁，本线程还在睡眠，浪费时间
+            //（2）：设置时常小之后，导致不停的睡眠启动线程，系统开销大
+            //3：Thread.wait();不推荐，因为在唤醒线程的时候，无法准确指定唤醒那一个线程；
+            //4：使用Unsafe类中的park()和unpark()方法，进行手动的释放和开启线程（此两种方法已经重写在了jdk的LockSupport类中）
+            /*
+                //jdk中的方法体
+                public static void park(Object blocker) {
+                    Thread t = Thread.currentThread();
+                    setBlocker(t, blocker);
+                    U.park(false, 0L);
+                    setBlocker(t, (Object)null);
+                }
+             */
+
+            //判断当前线程是否是第一个等待的线程（保证公平），如果是则继续循环获取锁，获取成功跳出循环
+            if((current==waiters.peek()) &amp;&amp; acquire()){
+                //第一个线程获取到锁之后，将它从等待队列中移除
+                waiters.poll();
+                return;
+            }
+            //阻塞当前线程（将此线程的所有数据放入内存中的运行时数据区）
+            LockSupport.park(current);
+        }
+
+    }
+
+
+    //解锁方法
+    public void unLock(){
+        //判断当前对象是不是之前拿到锁的对象
+        if(Thread.currentThread()!=localHolder){
+            throw new RuntimeException(&quot;LocalHolder is not current thread&quot;);
+        }
+        //将state和LocalHolder都置为空，表示当前锁空闲
+        int state = getState();
+        if(compareAndSwapState(state,0)){
+            setLocalHolder(null);
+            //当前锁空闲后，如果等待队列中有线程，则唤醒此线程
+            Thread first = waiters.peek();
+            if(first!=null){
+                LockSupport.unpark(first);
+            }
+        }
+    }
+    /*
+     * 原子操作。
+     * @param except:目前值
+     * @param update:要更新后的值
+     */
+    public final boolean compareAndSwapState(int except,int update){
+        return unsafe.compareAndSwapInt(this,stateOffset,except,update);
+    }
+
+    //通过反射机制获取到Unsafe对象
+    private static final Unsafe unsafe = UnsafeInstance.reflectGetUnsafe();
+
+    //在内存的偏移量值，因为CAS种需要此参数
+    private static long stateOffset;
+
+    static {
+        try {
+            //找到state对象在内存中的偏移量
+            stateOffset = unsafe.objectFieldOffset(AQS.class.getDeclaredField(&quot;state&quot;));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    static class UnsafeInstance{
+        //获取Unsafe对象
+        public static Unsafe reflectGetUnsafe() {
+
+            //通过反射机制获取到Unsafe类
+            Field field = null;
+            try {
+                field = Unsafe.class.getDeclaredField(&quot;theUnsafe&quot;);
+                field.setAccessible(true);
+                return (Unsafe) field.get(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+}
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h2 id="参考资料" tabindex="-1"><a class="header-anchor" href="#参考资料" aria-hidden="true">#</a> 参考资料</h2><ul><li><a href="https://www.cnblogs.com/leesf456/p/5350186.html" target="_blank" rel="noopener noreferrer">https://www.cnblogs.com/leesf456/p/5350186.html<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">open in new window</span></span></a></li><li><a href="https://pdai.tech/md/java/thread/java-thread-x-lock-AbstractQueuedSynchronizer.html" target="_blank" rel="noopener noreferrer">https://pdai.tech/md/java/thread/java-thread-x-lock-AbstractQueuedSynchronizer.html<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">open in new window</span></span></a></li><li><a href="https://zhuanlan.zhihu.com/p/642177775" target="_blank" rel="noopener noreferrer">https://zhuanlan.zhihu.com/p/642177775<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">open in new window</span></span></a></li></ul></div><!----><footer class="page-meta"><div class="meta-item edit-link"><a href="https://github.com/forezp/JavaJike/edit/main/src/interview/concurrent/tools/2023-12-17-aqs.md" rel="noopener noreferrer" target="_blank" aria-label="在GitHub上编辑此页" class="nav-link label"><!--[--><svg xmlns="http://www.w3.org/2000/svg" class="icon edit-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="edit icon"><path d="M430.818 653.65a60.46 60.46 0 0 1-50.96-93.281l71.69-114.012 7.773-10.365L816.038 80.138A60.46 60.46 0 0 1 859.225 62a60.46 60.46 0 0 1 43.186 18.138l43.186 43.186a60.46 60.46 0 0 1 0 86.373L588.879 565.55l-8.637 8.637-117.466 68.234a60.46 60.46 0 0 1-31.958 11.229z"></path><path d="M728.802 962H252.891A190.883 190.883 0 0 1 62.008 771.98V296.934a190.883 190.883 0 0 1 190.883-192.61h267.754a60.46 60.46 0 0 1 0 120.92H252.891a69.962 69.962 0 0 0-69.098 69.099V771.98a69.962 69.962 0 0 0 69.098 69.098h475.911A69.962 69.962 0 0 0 797.9 771.98V503.363a60.46 60.46 0 1 1 120.922 0V771.98A190.883 190.883 0 0 1 728.802 962z"></path></svg><!--]-->在GitHub上编辑此页<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">open in new window</span></span><!----></a></div><div class="meta-item git-info"><div class="update-time"><span class="label">上次编辑于: </span><!----></div><div class="contributors"><span class="label">贡献者: </span><!--[--><!--[--><span class="contributor" title="email: 124746406@qq.com">forezp</span><!--]--><!--]--></div></div></footer><!----><!----><!----><!--]--></main><!--]--><footer class="vp-footer-wrapper"><div class="vp-footer"><a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18121138号-1</a></div><div class="vp-copyright">Copyright © 2023 fangzhipeng</div></footer></div><!--]--><!----><!----><!--]--></div>
+    <script type="module" src="/assets/app-2155adce.js" defer></script>
+  </body>
+</html>
