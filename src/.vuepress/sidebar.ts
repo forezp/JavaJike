@@ -99,15 +99,13 @@ export default sidebar({
                     collapsible: false,
                     children: "structure",
                 },
-                // {
-                //     text: "并发工具类",
-                //     icon: "zhenshikexin",
-                //     prefix: "tools/",
-                //     collapsible: false,
-                //     children: [
-                //
-                //     ],
-                // },
+                {
+                    text: "并发工具类",
+                    icon: "shijianchuo",
+                    prefix: "tools/",
+                    collapsible: false,
+                    children: "structure",
+                },
             ],
 
         }
