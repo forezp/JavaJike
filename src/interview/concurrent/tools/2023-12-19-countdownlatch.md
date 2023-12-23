@@ -10,7 +10,7 @@ description: CountDownLatch源码解析
 
 
 
-## 简介
+## CountDownLatch简介
 
 CountDownLatch 是 Java 并发包中提供的一种同步工具，它可以让一个或多个线程等待其他线程完成操作之后再继续执行。
 
