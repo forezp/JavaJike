@@ -22,7 +22,7 @@ CyclicBarrier 的主要特点包括：
 
 
 
-## CyclicBarrier使用简介
+## CyclicBarrier使用示例
 
 在CountDownLatch使用示例，我们每次在执行while (hasOrder) {}方法体里面每次都去创建一个CountDownLatch去做线程的同步等待。我们可以使用CyclicBarrier也可以达到同样的效果。示例代码如下：
 
