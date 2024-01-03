@@ -1,11 +1,11 @@
 ---
 lang: zh-CN
-title: CopyOnWriteArrayList使用和源码解析
+title: CopyOnWriteArrayList源码解析
 headerDepth: 1
 order: 7
 icon: yinle
 collapsible: false
-description: CopyOnWriteArrayList使用和源码解析
+description: CopyOnWriteArrayList源码解析
 ---
 
 CopyOnWriteArrayList 是 Java 并发包中的一个线程安全的集合类，它实现了 List 接口。与其他并发集合不同的是，CopyOnWriteArrayList 的读操作是无锁的，而写操作则是通过创建并复制底层数组的方式实现的。

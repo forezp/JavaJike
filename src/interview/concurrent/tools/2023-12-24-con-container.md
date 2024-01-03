@@ -1,11 +1,11 @@
 ---
 lang: zh-CN
-title: 并发容器汇总
+title: 并发容器详解
 headerDepth: 1
 order: 6
 icon: shujujianguan
 collapsible: false
-description: 并发容器汇总
+description: 并发容器详解
 ---
 
 Java并发包里有很多内容都是并发容器的内容，在多线程并发情况下也能安全的使用这些容器。在Java 的老版本的SDK中，提供了同步容器，比如Vector、Hashtable，这些都是基于synchronized关键字实现的，通常一个容器的所有操作共用一把锁，当容器数据量达到一定规模和读写量达到一定规模的时候，静态条件经常触发，性能比较差。
