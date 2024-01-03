@@ -2,7 +2,7 @@
 lang: zh-CN
 title: BlockingQueue详解
 headerDepth: 1
-order: 8
+order: 9
 icon: wuliu
 collapsible: false
 description: BlockingQueue详解
