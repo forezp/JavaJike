@@ -8,7 +8,7 @@ collapsible: false
 description: BlockingQueue详解
 ---
 
-
+google-site-verification=5Sx1Ko4M39zIL01OlNc4To63Vx0yoNQ5AnFtinbe278
 
 ## 什么是BlockingQueue
 
