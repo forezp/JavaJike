@@ -1,11 +1,11 @@
 ---
 lang: zh-CN
-title: JAVA并发包的线程池: ThreadPoolExecutor详解
+title: JAVA并发包的线程池:ThreadPoolExecutor详解
 headerDepth: 1
 order: 11
 icon: tiaoxingma
 collapsible: false
-description: Java线程池: ThreadPoolExecutor详解
+description: Java线程池:ThreadPoolExecutor详解
 ---
 
 ## 前言
