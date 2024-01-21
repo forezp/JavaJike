@@ -36,11 +36,7 @@ FutureTask实现了RunnableFuture接口，则RunnableFuture接口继承了Runnab
 - 第2种方式: FutureTask + Thread
 - 第3种方式: FutureTask + ExecutorService（推荐）
 
-
-
-### Future + ExecutorService
-
-
+**Future + ExecutorService**
 
 当使用 `Future` 结合 `ExecutorService` 时，可以实现异步提交任务，并通过 `Future` 获取任务的执行结果，以下是一个简单的示例：
 
@@ -88,9 +84,7 @@ public class FutureWithExecutorServiceExample {
 
 这样就可以利用 `Future` 结合 `ExecutorService` 实现异步任务的提交和获取执行结果。
 
-
-
-### FutureTask + Thread
+**FutureTask + Thread**
 
 当使用`FutureTask`结合`Thread`时，可以手动创建一个线程来执行`FutureTask`，以下是一个简单的示例：
 
@@ -137,9 +131,7 @@ public class FutureTaskWithThreadExample {
 
 这样就可以手动创建线程来执行`FutureTask`，并获取任务的执行结果。
 
-
-
-### FutureTask + ExecutorService
+**FutureTask + ExecutorService**
 
 以下是一个使用 `FutureTask` 的简单示例：
 
@@ -183,7 +175,11 @@ public class FutureTaskExample {
 
 在上述示例中，我们创建了一个 `Callable` 对象，表示需要执行的具体任务。然后将该 `Callable` 对象传入 `FutureTask` 构造器创建一个 `FutureTask` 对象。接着，将 `FutureTask` 对象提交给线程池执行。我们通过 `get()` 方法等待任务执行完成，并获取执行结果。在等待任务完成时，可以设置超时时间。最后，我们关闭线程池。
 
+
+
 ## FutureTask源码解析
+
+
 
 ### Callable接口
 
@@ -191,12 +187,7 @@ public class FutureTaskExample {
 
 ```
 public interface Callable<V> {
-    /**
-     * Computes a result, or throws an exception if unable to do so.
-     *
-     * @return computed result
-     * @throws Exception if unable to compute a result
-     */
+
     V call() throws Exception;
 }
 ```
@@ -205,7 +196,7 @@ public interface Callable<V> {
 
 
 
-### **Future接口**
+### Future接口
 
 Future接口代表异步计算的结果，通过Future接口提供的方法可以查看异步计算是否执行完成，或者等待执行结果并获取执行结果，同时还可以取消执行。Future接口的定义如下:
 
@@ -226,28 +217,26 @@ public interface Future<V> {
 - get():获取任务执行结果，如果任务还没完成则会阻塞等待直到任务执行完成。如果任务被取消则会抛出CancellationException异常，如果任务执行过程发生异常则会抛出ExecutionException异常，如果阻塞等待过程中被中断则会抛出InterruptedException异常。
 - get(long timeout,Timeunit unit):带超时时间的get()版本，如果阻塞等待过程中超时则会抛出TimeoutException异常。
 
-### **FutureTask**
+### FutureTask
 
 FutureTask实现了RunnableFuture接口，则RunnableFuture接口继承了Runnable接口和Future接口，所以FutureTask既能当做一个Runnable直接被Thread执行，也能作为Future用来得到Callable的计算结果。
 
-
-
-### **构造函数**
-
-先从FutureTask的构造函数看起，FutureTask有两个构造函数，其中一个如下：
+### 核心属性
 
 ```
-public FutureTask(Callable<V> callable) {
-        if (callable == null)
-            throw new NullPointerException();
-        this.callable = callable;
-        this.state = NEW;       // ensure visibility of callable
-}
-```
+//内部持有的callable任务，运行完毕后置空
+private Callable<V> callable;
 
-这个构造函数会把传入的Callable变量保存在this.callable字段中，该字段定义为private Callable<V> callable;用来保存底层的调用，在被执行完成以后会指向null,接着会初始化state字段为NEW。state字段用来保存FutureTask内部的任务执行状态，一共有7中状态，每种状态及其对应的值如下：
+//从get()中返回的结果或抛出的异常
+private Object outcome; // non-volatile, protected by state reads/writes
 
-```
+//运行callable的线程
+private volatile Thread runner;
+
+//使用Treiber栈保存等待线程
+private volatile WaitNode waiters;
+
+//任务状态
 private volatile int state;
 private static final int NEW          = 0;
 private static final int COMPLETING   = 1;
@@ -256,11 +245,8 @@ private static final int EXCEPTIONAL  = 3;
 private static final int CANCELLED    = 4;
 private static final int INTERRUPTING = 5;
 private static final int INTERRUPTED  = 6;
+
 ```
-
-其中需要注意的是state是volatile类型的，也就是说只要有任何一个线程修改了这个变量，那么其他所有的线程都会知道最新的值。
-
-为了后面更好的分析FutureTask的实现，这里有必要解释下各个状态。
 
 - NEW:表示是个新的任务或者还没被执行完的任务。这是初始状态。
 - COMPLETING:任务已经执行完成或者执行任务的时候发生异常，但是任务执行结果或者异常原因还没有保存到outcome字段(outcome字段用来保存任务执行结果，如果发生异常，则用来保存异常原因)的时候，状态会从NEW变更到COMPLETING。但是这个状态会时间会比较短，属于中间状态。
@@ -276,56 +262,11 @@ private static final int INTERRUPTED  = 6;
 
 ![img](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/1/8/java-thread-x-juc-futuretask-2.png)
 
-另外一个构造函数如下，
 
 
-
-```
-public FutureTask(Runnable runnable, V result) {
-         this.callable = Executors.callable(runnable, result);
-         this.state = NEW;       // ensure visibility of callable
- }
-```
-
-这个构造函数会把传入的Runnable封装成一个Callable对象保存在callable字段中，同时如果任务执行成功的话就会返回传入的result。这种情况下如果不需要返回值的话可以传入一个null。
-
-顺带看下Executors.callable()这个方法，这个方法的功能是把Runnable转换成Callable，代码如下:
-
-```
- public static <T> Callable<T> callable(Runnable task, T result) {
-     if (task == null)
-         throw new NullPointerException();
-     return new RunnableAdapter<T>(task, result);
- }
-```
-
-可以看到这里采用的是适配器模式，调用RunnableAdapter<T>(task, result)方法来适配，实现如下:
-
-```static final class RunnableAdapter<T> implements Callable<T> {
-    final Runnable task;
-    final T result;
-    RunnableAdapter(Runnable task, T result) {
-        this.task = task;
-        this.result = result;
-    }
-    public T call() {
-        task.run();
-        return result;
-    }
-}
-```
-
-这个适配器很简单，就是简单的实现了Callable接口，在call()实现中调用Runnable.run()方法，然后把传入的result作为任务的结果返回。
-
-在new了一个FutureTask对象之后，接下来就是在另一个线程中执行这个Task,无论是通过直接new一个Thread还是通过线程池，执行的都是run()方法，接下来就看看run()方法的实现。
-
-
-
-### **run()**
+### run方法
 
 run()方法实现如下:
-
-
 
 ```
 public void run() {
@@ -371,12 +312,13 @@ public void run() {
 
 run()方法首先会
 
-1. 判断当前任务的state是否等于NEW,如果不为NEW则说明任务或者已经执行过，或者已经被取消，直接返回。
-2. 如果状态为NEW则接着会通过unsafe类把任务执行线程引用CAS的保存在runner字段中，如果保存失败，则直接返回。
-3. 执行任务。
-4. 如果任务执行发生异常，则调用setException()方法保存异常信息。setException()方法如下：
+- 判断当前任务的state是否等于NEW,如果不为NEW则说明任务或者已经执行过，或者已经被取消，直接返回。
 
+- 如果状态为NEW则接着会通过unsafe类把任务执行线程引用CAS的保存在runner字段中，如果保存失败，则直接返回。
 
+- 执行任务。
+
+- 如果任务执行发生异常，则调用setException()方法保存异常信息。setException()方法如下：
 
 ```
 protected void setException(Throwable t) {
@@ -388,14 +330,14 @@ protected void setException(Throwable t) {
 }
 ```
 
-在setException()方法中
+在setException()方法中 
 
 - 首先会CAS的把当前的状态从NEW变更为COMPLETING状态。
 - 把异常原因保存在outcome字段中，outcome字段用来保存任务执行结果或者异常原因。
 - CAS的把当前任务状态从COMPLETING变更为EXCEPTIONAL。这个状态转换对应着上图中的二。
 - 调用finishCompletion()。关于这个方法后面在分析。
 
-5. 如果任务成功执行则调用set()方法设置执行结果，该方法实现如下:
+如果任务成功执行则调用set()方法设置执行结果，该方法实现如下:
 
 ```
 protected void set(V v) {
@@ -416,9 +358,7 @@ protected void set(V v) {
 
 发起任务线程跟执行任务线程通常情况下都不会是同一个线程，在任务执行线程执行任务的时候，任务发起线程可以查看任务执行状态、获取任务执行结果、取消任务等等操作，接下来分析下这些操作。
 
-
-
-### **get()**
+### get方法
 
 任务发起线程可以调用get()方法来获取任务执行结果，如果此时任务已经执行完毕则会直接返回任务结果，如果任务还没执行完毕，则调用方会阻塞直到任务执行结束返回结果为止。get()方法实现如下:
 
@@ -433,13 +373,13 @@ public V get() throws InterruptedException, ExecutionException {
 
 get()方法实现比较简单，会
 
-1. 判断任务当前的state <= COMPLETING是否成立。前面分析过，COMPLETING状态是任务是否执行完成的临界状态。
-2. 如果成立，表明任务还没有结束(这里的结束包括任务正常执行完毕，任务执行异常，任务被取消)，则会调用awaitDone()进行阻塞等待。
-3. 如果不成立表明任务已经结束，调用report()返回结果。
+- 判断任务当前的state <= COMPLETING是否成立。前面分析过，COMPLETING状态是任务是否执行完成的临界状态。
 
+- 如果成立，表明任务还没有结束(这里的结束包括任务正常执行完毕，任务执行异常，任务被取消)，则会调用awaitDone()进行阻塞等待。
 
+- 如果不成立表明任务已经结束，调用report()返回结果。
 
-### **awaitDone()**
+### awaitDone方法
 
 当调用get()获取任务结果但是任务还没执行完成的时候，调用线程会调用awaitDone()方法进行阻塞等待，该方法定义如下:
 
@@ -499,22 +439,24 @@ private int awaitDone(boolean timed, long nanos)
 
 awaitDone()中有个死循环，每一次循环都会
 
-1. 判断调用get()的线程是否被其他线程中断，如果是的话则在等待队列中删除对应节点然后抛出InterruptedException异常。
-2. 获取任务当前状态，如果当前任务状态大于COMPLETING则表示任务执行完成，则把thread字段置null并返回结果。
-3. 如果任务处于COMPLETING状态，则表示任务已经处理完成(正常执行完成或者执行出现异常)，但是执行结果或者异常原因还没有保存到outcome字段中。这个时候调用线程让出执行权让其他线程优先执行。
-4. 如果等待节点为空，则构造一个等待节点WaitNode。
-5. 如果第四步中新建的节点还没如队列，则CAS的把该节点加入waiters队列的首节点。
-6. 阻塞等待。
+- 判断调用get()的线程是否被其他线程中断，如果是的话则在等待队列中删除对应节点然后抛出InterruptedException异常。
+- 获取任务当前状态，如果当前任务状态大于COMPLETING则表示任务执行完成，则把thread字段置null并返回结果。
+- 如果任务处于COMPLETING状态，则表示任务已经处理完成(正常执行完成或者执行出现异常)，但是执行结果或者异常原因还没有保存到outcome字段中。这个时候调用线程让出执行权让其他线程优先执行。
+- 如果等待节点为空，则构造一个等待节点WaitNode。
+- 如果第四步中新建的节点还没如队列，则CAS的把该节点加入waiters队列的首节点。
+- 阻塞等待。
 
 假设当前state=NEW且waiters为NULL,也就是说还没有任何一个线程调用get()获取执行结果，这个时候有两个线程threadA和threadB先后调用get()来获取执行结果。再假设这两个线程在加入阻塞队列进行阻塞等待之前任务都没有执行完成且threadA和threadB都没有被中断的情况下(因为如果threadA和threadB在进行阻塞等待结果之前任务就执行完成或线程本身被中断的话，awaitDone()就执行结束返回了)，执行过程是这样的，以threadA为例:
 
-1. 第一轮for循环，执行的逻辑是q == null,所以这时候会新建一个节点q。第一轮循环结束。
-2. 第二轮for循环，执行的逻辑是!queue，这个时候会把第一轮循环中生成的节点的netx指针指向waiters，然后CAS的把节点q替换waiters。也就是把新生成的节点添加到waiters链表的首节点。如果替换成功，queued=true。第二轮循环结束。
-3. 第三轮for循环，进行阻塞等待。要么阻塞特定时间，要么一直阻塞知道被其他线程唤醒。
+- 第一轮for循环，执行的逻辑是q == null,所以这时候会新建一个节点q。第一轮循环结束。
+
+- 第二轮for循环，执行的逻辑是!queue，这个时候会把第一轮循环中生成的节点的netx指针指向waiters，然后CAS的把节点q替换waiters。也就是把新生成的节点添加到waiters链表的首节点。如果替换成功，queued=true。第二轮循环结束。
+
+- 第三轮for循环，进行阻塞等待。要么阻塞特定时间，要么一直阻塞知道被其他线程唤醒。
 
 
 
-### **cancel(boolean)**
+### cancel方法
 
 用户可以调用cancel(boolean)方法取消任务的执行，cancel()实现如下:
 
@@ -546,21 +488,23 @@ public boolean cancel(boolean mayInterruptIfRunning) {
 
 cancel()方法会做下面几件事:
 
- 1 .判断任务当前执行状态，如果任务状态不为NEW，则说明任务或者已经执行完成，或者执行异常，不能被取消，直接返回false表示执行失败。
+- 判断任务当前执行状态，如果任务状态不为NEW，则说明任务或者已经执行完成，或者执行异常，不能被取消，直接返回false表示执行失败。
 
-2. 判断需要中断任务执行线程，则
+- 判断需要中断任务执行线程，则
 
-- 把任务状态从NEW转化到INTERRUPTING。这是个中间状态。
-- 中断任务执行线程。
-- 修改任务状态为INTERRUPTED。这个转换过程对应上图中的四。
+  - 把任务状态从NEW转化到INTERRUPTING。这是个中间状态。
 
-3. 如果不需要中断任务执行线程，直接把任务状态从NEW转化为CANCELLED。如果转化失败则返回false表示取消失败。这个转换过程对应上图中的四。
+  - 中断任务执行线程。
 
-4. 调用finishCompletion()。
+  - 修改任务状态为INTERRUPTED。这个转换过程对应上图中的四。
+
+- 如果不需要中断任务执行线程，直接把任务状态从NEW转化为CANCELLED。如果转化失败则返回false表示取消失败。这个转换过程对应上图中的四。
+
+- 调用finishCompletion()。
 
 
 
-### **finishCompletion()**
+### finishCompletion方法
 
 根据前面的分析，不管是任务执行异常还是任务正常执行完毕，或者取消任务，最后都会调用finishCompletion()方法，该方法实现如下:
 
