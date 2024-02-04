@@ -13,7 +13,7 @@ export default navbar([
     icon: "smile",
     link: "/observibility/metric/2023-08-29-introduction.md",
   },
-    
+
   {
     text: "我的Github",
     icon: "github",
