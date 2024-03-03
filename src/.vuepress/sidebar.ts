@@ -71,19 +71,6 @@ export default sidebar({
                 },
             ],
 
-            // children: [
-            //     {
-            //         text: "高频面试题",
-            //         icon: "jishufuwu",
-            //         prefix: "shortq/",
-            //         collapsible: true,
-            //         children: [
-            //             "2023-11-14-java1.md",
-            //             "2023-11-20-java2.md",
-            //             "2023-11-26-final.md"
-            //         ],
-            //     },
-            // ],
         },
         {
             text: "并发编程",
@@ -107,8 +94,14 @@ export default sidebar({
                     children: "structure",
                 },
             ],
-
-        }
+        }, {
+            text: "Mysql",
+            prefix: "mysql/",
+            icon: "cangchucangku",
+            collapsible: true,
+            //link: "design/",
+            children: "structure",
+        },
     ],
     "/observibility/": [
         {
