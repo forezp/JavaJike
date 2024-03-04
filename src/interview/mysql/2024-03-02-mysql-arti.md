@@ -3,7 +3,7 @@ lang: zh-CN
 title: 请介绍一下Mysql的架构
 headerDepth: 0
 order: 1
-icon: a-008_huoguo
+icon: lianjie
 description: 请介绍一下Mysql的架构
 ---
 
