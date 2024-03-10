@@ -2,7 +2,7 @@
 lang: zh-CN
 title: 怎么优雅的选择 MySQL 存储引擎
 headerDepth: 0
-order: 10
+order: 11
 icon: banquan
 description: 怎么优雅的选择 MySQL 存储引擎
 ---

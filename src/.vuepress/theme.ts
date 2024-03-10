@@ -12,7 +12,7 @@ export default hopeTheme({
    //pure: true,
   // 关键词: "iconfont", "iconify", "fontawesome", "fontawesome-with-brands"
   // iconAssets: "iconfont",
-  iconAssets: "//at.alicdn.com/t/c/font_4318520_kk4pcsn4t4d.css",
+  iconAssets: "//at.alicdn.com/t/c/font_4318520_t6o8j9n8wz.css",
   logo: "/logo.png",
   breadcrumb: false,
   repo: "forezp/JavaJike",

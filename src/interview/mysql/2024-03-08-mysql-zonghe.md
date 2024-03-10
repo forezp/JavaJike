@@ -2,7 +2,7 @@
 lang: zh-CN
 title: Mysql综合练习题
 headerDepth: 0
-order: 8
+order: 9
 icon: shenfenshibierenzheng
 description: Mysql综合练习题
 ---

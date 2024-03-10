@@ -2,7 +2,7 @@
 lang: zh-CN
 title: mysql有哪些存储引擎?常见的两种存储引擎介绍
 headerDepth: 0
-order: 9
+order: 10
 icon: yuanchengchuantou
 description: mysql有哪些存储引擎?常见的两种存储引擎介绍
 ---
