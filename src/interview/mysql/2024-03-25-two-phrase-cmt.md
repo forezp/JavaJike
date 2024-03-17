@@ -1,5 +1,9 @@
 ---
-
+lang: zh-CN
+title: 什么是事务的两阶段提交？
+headerDepth: 0
+order: 25
+description: 什么是事务的两阶段提交？
 ---
 
 
@@ -44,4 +48,11 @@ Redo Log 是 InnoDB 存储引擎的事务日志，记录了每个事务对数据
 Binlog 则是 MySQL 的逻辑日志，记录了数据库的逻辑操作，比如 SQL 语句的执行。Binlog 在数据备份、恢复和主从复制等场景下发挥着重要作用。通过 Binlog，可以实现数据的远程备份、恢复以及主从复制等功能。
 
 两阶段提交的主要目的是确保 Redo Log 和 Binlog 的数据一致性，从而保证数据库在崩溃恢复和主从复制等场景下的可靠性和稳定性。通过两阶段提交机制，可以在事务提交时，先将 Redo Log 标记为准备状态，然后再将 Binlog 记录下来，最终将 Redo Log 标记为提交状态，从而保证 Redo Log 和 Binlog 的逻辑一致性。
+
+
+
+
+  <img src="https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/17/avatar.jpg" alt="img" style="zoom:50%;" />
+
+
 
