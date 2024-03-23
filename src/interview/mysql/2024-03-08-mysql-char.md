@@ -24,3 +24,5 @@ description: char和varchar的区别
    - `varchar`最多可以存储65535个字符（根据不同数据库的实现而有所不同）。
 
 建议根据实际需求选择合适的数据类型。如果存储的数据长度是固定的，使用`char`可以提高一些性能；如果存储的数据长度是可变的，使用`varchar`可以节省一些存储空间。
+
+<!-- @include: @article-footer.snippet.md -->

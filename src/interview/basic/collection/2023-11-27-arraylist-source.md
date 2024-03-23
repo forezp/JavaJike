@@ -327,3 +327,4 @@ ArrayList 的迭代器通过内部类 `Itr` 实现，支持对集合进行顺序
 
 **需要注意的是，在使用迭代器遍历 ArrayList 的过程中，不建议直接使用 `ArrayList` 对象的 `remove()` 方法进行元素的删除操作，而应该使用迭代器的 `remove()` 方法进行删除，以避免产生并发修改异常。**
 
+<!-- @include: @article-footer.snippet.md -->

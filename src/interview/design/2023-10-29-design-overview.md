@@ -126,3 +126,4 @@ description: 设计模式面试概述
 
 
 
+<!-- @include: @article-footer.snippet.md -->

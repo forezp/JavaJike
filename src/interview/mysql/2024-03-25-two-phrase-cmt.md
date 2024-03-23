@@ -52,7 +52,7 @@ Binlog 则是 MySQL 的逻辑日志，记录了数据库的逻辑操作，比如
 
 
 
-  <img src="https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/17/avatar.jpg" alt="img" style="zoom:50%;" />
+  <!-- @include: @article-footer.snippet.md -->
 
 
 

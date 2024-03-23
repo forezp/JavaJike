@@ -131,3 +131,5 @@ rule_files:
 重新启动Prometheus，在Prometheus的页面上可以查看新指标的数据，如下：
 
 ![image-20231023210926364](https://static.javajike.com/img/2023/10/29/image-20231023210926364.png)
+
+<!-- @include: @article-footer.snippet.md -->

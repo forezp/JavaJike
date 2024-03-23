@@ -139,3 +139,4 @@ public class Client {
 
 综上所述，观察者模式是一种实用并且简单的设计模式，它能够提高系统的可扩展性和灵活性。但是在使用它的时候需要注意它带来的一些缺点，要做一些优化工作。
 
+<!-- @include: @article-footer.snippet.md -->

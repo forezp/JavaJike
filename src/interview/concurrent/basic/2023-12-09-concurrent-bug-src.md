@@ -188,3 +188,4 @@ singleton=memory; //3:设置singleton指向刚分配的内存空间
 
 
 
+<!-- @include: @article-footer.snippet.md -->

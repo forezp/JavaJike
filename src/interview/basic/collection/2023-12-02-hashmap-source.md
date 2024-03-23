@@ -316,3 +316,4 @@ HashMap 是 Java 中常用的哈希表实现，用于存储键值对。HashMap �
 
 需要注意的是，HashMap不是线程安全的，不能在多个线程中操作同一个HashMap，会导致一些并发问题。如果需要在多线程中操作同一个Map，建议使用ConcurrentHashMap。
 
+<!-- @include: @article-footer.snippet.md -->

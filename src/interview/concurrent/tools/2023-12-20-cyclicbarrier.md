@@ -422,3 +422,5 @@ private void breakBarrier() {
 ### 参考
 
 https://www.cnblogs.com/leesf456/p/5392816.html
+
+<!-- @include: @article-footer.snippet.md -->

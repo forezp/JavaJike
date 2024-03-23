@@ -33,3 +33,4 @@ InnoDB和MyISAM是MySQL数据库中两种常见的存储引擎，它们有以下
    - MyISAM引擎支持表级缓存，适用于读密集型应用，但对于写入密集型应用，可能会导致性能问题。
    - InnoDB引擎不支持表级缓存，它使用了缓冲池来缓存数据和索引，这在读写混合型应用中表现更为稳定。
 
+<!-- @include: @article-footer.snippet.md -->

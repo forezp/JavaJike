@@ -250,3 +250,5 @@ Synchronized是通过对象内部的一个叫做监视器锁（monitor）来实�
 - 轻量级锁（Lightweight Locking）：JDK 6 引入了轻量级锁机制，用于优化对同步块的访问。轻量级锁使用 CAS（比较并交换）指令来进行加锁和解锁操作，避免了线程阻塞和内核切换的开销。
 
 这些优化技术在 JDK 中的实现使得 synchronized 关键字的性能有了较大的提升，使其成为高效的线程同步机制之一。
+
+<!-- @include: @article-footer.snippet.md -->

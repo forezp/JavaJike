@@ -203,3 +203,5 @@ grafana有很多配置项在conf目录下default.ini文件下，此篇文章不�
 - prometheus作为一个采集组件，采集了node-exporter的指标
 - 同时prometheus作为一个时序数据库，存储了node-expoter的指标时序
 - grafana作为数据展示前端，读取prometheus的指标时序，并展示在监控大盘上。
+
+<!-- @include: @article-footer.snippet.md -->

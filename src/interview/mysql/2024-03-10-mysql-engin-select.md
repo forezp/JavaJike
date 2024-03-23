@@ -35,3 +35,4 @@ MySQL最常使用的存储引擎是InnoDB、MyISAM、Memory，在选择数据库
    
    在选择存储引擎时，综合考虑特性和性能，根据应用程序的具体需求进行评估。有时候，也可以结合不同存储引擎的优势，使用多个引擎来满足不同的需求。
 
+<!-- @include: @article-footer.snippet.md -->

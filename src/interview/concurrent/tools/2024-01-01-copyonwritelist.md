@@ -473,3 +473,4 @@ CopyOnWriteArrayList 的实现使用了快照的思路，通过创建新的底�
 
 具体而言，当有写操作发生时，CopyOnWriteArrayList 会创建一个底层数组的副本，然后在副本上进行写操作，这样迭代过程中使用的是原来的底层数组快照，保证了迭代的线程安全性和不会发生并发修改异常。
 
+<!-- @include: @article-footer.snippet.md -->

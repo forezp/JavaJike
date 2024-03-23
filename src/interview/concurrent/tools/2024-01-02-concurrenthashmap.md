@@ -736,3 +736,5 @@ final V replaceNode(Object key, V value, Object cv) {
 https://www.cnblogs.com/leesf456/p/5453341.html
 
 http://blog.fangzhipeng.com/javainterview/2019/03/18/concurrenthashmap.html
+
+<!-- @include: @article-footer.snippet.md -->

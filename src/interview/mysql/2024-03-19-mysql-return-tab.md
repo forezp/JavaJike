@@ -68,3 +68,4 @@ SELECT id, username, age FROM table WHERE username = 'forezp';
 - 确保查询的条件列和需要检索的列都被索引覆盖。如果查询中的列没有适当的索引，MySQL会回表操作来获取缺失的数据。
 - 分析查询的条件和列，创建合适的索引来覆盖查询的需求。
 
+<!-- @include: @article-footer.snippet.md -->

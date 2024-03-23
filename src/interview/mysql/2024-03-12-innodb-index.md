@@ -79,3 +79,5 @@ CREATE TABLE products (
 - `location`列存储产品的地理位置坐标，并创建了一个空间索引，以支持地理空间查询。
 - `created_at`和`updated_at`列分别存储产品的创建时间和更新时间，并分别创建了普通索引。
 - `name_price_index`是一个联合索引，组合了产品名称和价格两列，以支持按名称和价格进行查询。
+
+<!-- @include: @article-footer.snippet.md -->

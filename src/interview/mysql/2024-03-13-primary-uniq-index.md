@@ -35,3 +35,4 @@ description: 主键索引和唯一索引的区别
 
    - 唯一索引适用于需要确保某列值的唯一性。
 
+<!-- @include: @article-footer.snippet.md -->

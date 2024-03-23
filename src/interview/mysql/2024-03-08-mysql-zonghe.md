@@ -183,3 +183,5 @@ select student.id ,name,sex,birth,department,address,c_name,grade from student,s
 ```
 select student.id ,name ,sex,birth ,department,address,c_name,grade from student,score where address like '湖南%' and student.id=score.stu_id;
 ```
+
+<!-- @include: @article-footer.snippet.md -->

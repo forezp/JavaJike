@@ -288,3 +288,4 @@ public class ThreadDemo4 {
 
 这是考察线程同步的例子，通过共享锁对象的`wait()`与`notifyAll()`方法来协调两个线程的执行顺序。从而达到交替打印奇偶输的目的。
 
+<!-- @include: @article-footer.snippet.md -->

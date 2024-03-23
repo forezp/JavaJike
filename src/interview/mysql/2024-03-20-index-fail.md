@@ -191,3 +191,5 @@ explain select * from user where id = 2 or username = 'forezp1';
 - not in和not exists可能会导致索引失效，在本文的mysql版本是走索引的。
 - is not null可能会导致索引失效，在本文的mysql版本是走索引的。
 - 不等于比较 <> 可能会导致索引失效，在本文的mysql版本是走索引的。
+
+<!-- @include: @article-footer.snippet.md -->

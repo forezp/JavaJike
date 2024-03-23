@@ -22,3 +22,4 @@ MySQL 中的事务（Transaction）是指一系列数据库操作（例如插入
 
 MySQL 的InnoDB数据库引擎支持事务，它使用 `START TRANSACTION`、`COMMIT` 和 `ROLLBACK` 等语句来管理事务。通过这些语句，可以明确地开始、提交或回滚事务，保证事务的原子性、一致性、隔离性和持久性。
 
+<!-- @include: @article-footer.snippet.md -->

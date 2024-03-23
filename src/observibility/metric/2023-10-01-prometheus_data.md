@@ -157,13 +157,4 @@ Histogram和summary的区别在于，summary是在sdk侧已经计算好了分位
 
 通常情况下，我们都会选择使用Histogram类型的指标去做分位数的统计，而不是使用summary。
 
-
-
-
-
-
-
-
-
-
-
+<!-- @include: @article-footer.snippet.md -->

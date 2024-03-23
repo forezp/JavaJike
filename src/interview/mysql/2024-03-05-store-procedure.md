@@ -65,3 +65,5 @@ CALL GetOrderCount(123);
 阿里巴巴的开发手册里明确不推荐使用存储过程：
 
 > 因为Mysql不会考虑不受其控制的操作成本，存储过程难以调试和扩展，更没有移植性。
+
+<!-- @include: @article-footer.snippet.md -->

@@ -324,3 +324,5 @@ public class CompletableFutureAllOfExample {
 7. 超时处理：使用 `completeOnTimeout()` 设置任务的超时时间。
 
 `CompletableFuture` 可以提高代码的性能和可读性，实现并发和并行操作，并轻松处理异常情况和组合多个异步任务的结果。再实际的开发中，选择什么样的工具可以根据实际的场景来决定。
+
+<!-- @include: @article-footer.snippet.md -->

@@ -160,3 +160,5 @@ public boolean remove(Object o) {
 HashSet 是一种无序、唯一性的集合实现。它基于哈希表的数据结构，通过使用 HashMap 来存储元素，并具有很好的性能特性。
 
 HashSet 是非线程安全的，如果在多线程环境下使用 HashSet，需要进行同步处理或使用线程安全的替代品，如 `ConcurrentHashSet`
+
+<!-- @include: @article-footer.snippet.md -->
