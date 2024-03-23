@@ -48,3 +48,53 @@ SELECT @@global.transaction_isolation AS 'Global Isolation Level', @@session.tra
 ```
 
 ![image-20240323225929035](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/23/image-20240323225929035.png)
+
+
+
+## 修改事务的隔离级别
+
+**修改当前会话**
+
+要修改当前会话（连接）的事务隔离级别，可以使用以下 SQL 语句：
+
+```sql
+SET SESSION TRANSACTION ISOLATION LEVEL isolation_level;
+```
+
+其中，`isolation_level` 是要设置的隔离级别，可以是以下值之一：
+
+- `READ UNCOMMITTED`
+- `READ COMMITTED`
+- `REPEATABLE READ`
+- `SERIALIZABLE`
+
+例如，要将当前会话的隔离级别设置为可重复读（Repeatable Read），可以执行以下命令：
+
+```sql
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+```
+
+请注意，修改隔离级别只会影响当前会话，对其他会话不会产生影响。
+
+![image-20240323230638902](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/23/image-20240323230638902.png)
+
+
+
+**全局修改**
+
+如果需要全局修改，可以执行以下命令：
+
+```
+SET GLOBAL TRANSACTION ISOLATION LEVEL isolation_level;
+```
+
+比如：
+
+```
+mysql> SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+Query OK, 0 rows affected (0.00 sec)
+```
+
