@@ -28,3 +28,5 @@ MySQL的默认隔离级别是`REPEATABLE READ`，在这个级别下，这种隔�
 | 读已提交 | 不可能（出现） | 可能       | 可能   |
 | 可重复读 | 不可能         | 不可能     | 可能   |
 | 可串行化 | 不可能         | 不可能     | 不可能 |
+
+<!-- @include: @article-footer.snippet.md -->
