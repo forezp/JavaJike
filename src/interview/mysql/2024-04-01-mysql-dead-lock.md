@@ -1,4 +1,10 @@
-
+---
+lang: zh-CN
+title: 在什么情况下会导致mysql死锁？
+headerDepth: 0
+order: 31
+description: 在什么情况下会导致mysql死锁？
+---
 
 
 
@@ -36,24 +42,52 @@
 
 - **分析和优化查询**：对于频繁导致死锁的查询，可以通过分析和优化查询语句、修改事务隔离级别等方式来减少死锁的发生。
 
-## 如何排除Mysql死锁
+
+
+## 如何排查Mysql死锁
 
 
 
 要排查MySQL死锁，您可以执行以下步骤：
 
-1. **查看错误日志**：MySQL服务器的错误日志可能包含有关死锁的信息。通常，当发生死锁时，MySQL会将相关信息记录到错误日志中，包括死锁检测到的时间、涉及的事务和表等。
+1. **查看错误日志**：MySQL服务器的错误日志可能包含有关死锁的信息。另外应用程序也会收到Mysql死锁的信息，通常会以错误日志的形式打印。ß
 
-2. **使用SHOW ENGINE INNODB STATUS命令**：这个命令可以提供有关InnoDB存储引擎的详细信息，包括当前活动的事务、锁信息以及最近发生的死锁。您可以通过分析这些信息来了解死锁的情况。
+2. **使用SHOW ENGINE INNODB STATUS命令**：这个命令可以提供有关InnoDB存储引擎的详细信息，包括当前活动的事务、锁信息以及最近发生的死锁。
 
     ```sql
     SHOW ENGINE INNODB STATUS;
     ```
 
-3. **查看锁信息**：您可以使用`INFORMATION_SCHEMA.INNODB_LOCKS`表和`INFORMATION_SCHEMA.INNODB_LOCK_WAITS`表来查看当前的锁信息和等待锁的事务。这可以帮助您确定哪些事务正在导致死锁以及它们之间的依赖关系。
+4. **分析事务**：通过分析正在执行的事务，特别是涉及到可能导致死锁的事务。可以使用`SHOW PROCESSLIST`命令来查看当前正在执行的事务和查询。
 
-4. **分析事务**：通过分析正在执行的事务，特别是涉及到可能导致死锁的事务，您可以确定死锁的根本原因。您可以使用`SHOW PROCESSLIST`命令来查看当前正在执行的事务和查询。
+5. **使用工具进行分析**：有一些MySQL死锁分析工具可以自动检测和分析死锁，例如pt-deadlock-logger和Percona的Percona Toolkit。这些工具可以帮助您更轻松地识别和解决死锁问题。
 
-5. **使用工具进行分析**：有一些MySQL死锁分析工具可以帮助您自动检测和分析死锁，例如pt-deadlock-logger和Percona的Percona Toolkit。这些工具可以帮助您更轻松地识别和解决死锁问题。
 
-一旦确定了死锁的原因，您可以采取相应的措施来解决死锁问题，例如调整事务的执行顺序、优化索引、修改事务隔离级别等。
+
+## 死锁演示
+
+表数据如下：
+
+![image-20240328231210013](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/28/image-20240328231210013.png)
+
+事务一：
+
+![image-20240328231141704](../../../../../../Library/Application Support/typora-user-images/image-20240328231141704.png)
+
+事务二：
+
+![image-20240328231109924](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/28/image-20240328231109924.png)
+
+此时事务 2 等待事务一释放锁，导致死锁。
+
+最终Mysql会执行超时让事务二重试：
+
+![image-20240328231310831](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/28/image-20240328231310831.png)
+
+
+
+此时：可以通过执行commit来提交事务一的事务；并重试事务 二，事务二可以获取事务锁。
+
+![image-20240328231729163](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/3/28/image-20240328231729163.png)
+
+<!-- @include: @article-footer.snippet.md -->
