@@ -1,0 +1,19 @@
+---
+lang: zh-CN
+title: 什么是操作系统和操作系统的基本功能
+headerDepth: 0
+order: 1
+icon: dui
+description: 请介绍一下Mysql的架构
+---
+
+## 什么是操作系统
+
+操作系统（OPERATING SYSTEM 缩写OS）是计算机最重要的系统软件，所有的计算机系统都配置了一种或者多种操作系统。操作系统是一个大型的程序系统，它负责计算机的全部软、硬资源的分配、调度工作，控制并协调并发活动，实现信息的存放和保护。 
+
+目前我们主流的操作系统有 windows操作系统，linux操作系统和 unix操作系统。
+
+  
+![图 3](https://static-1254191423.cos.ap-shanghai.myqcloud.com/img/2024/9/30/pic_1727627291638.png)  
+
+
