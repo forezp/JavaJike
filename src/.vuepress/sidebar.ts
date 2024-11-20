@@ -97,6 +97,14 @@ export default sidebar({
         }, {
             text: "Mysql",
             prefix: "mysql/",
+            icon: "bangong",
+            collapsible: true,
+            //link: "design/",
+            children: "structure",
+        },
+        {
+            text: "操作系统",
+            prefix: "os/",
             icon: "cangchucangku",
             collapsible: true,
             //link: "design/",
